@@ -3,6 +3,7 @@
  */
 package com.cooksys.twitterclone.controller;
 
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cooksys.twitterclone.service.HashtagService;
@@ -12,6 +13,7 @@ import com.cooksys.twitterclone.service.HashtagService;
  *
  */
 @RestController
+@RequestMapping("/tags/")
 public class HashtagController {
 
 	private HashtagService hashtagService;

@@ -15,7 +15,7 @@ public class ProfileDto {
 	private String phone;
 	
 	/**
-	 * 
+	 * Default Constructor
 	 */
 	public ProfileDto() { }
 

@@ -3,6 +3,7 @@
  */
 package com.cooksys.twitterclone.controller;
 
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cooksys.twitterclone.service.TweetService;
@@ -12,6 +13,7 @@ import com.cooksys.twitterclone.service.TweetService;
  *
  */
 @RestController
+@RequestMapping("/tweets/")
 public class TweetController {
 	
 	private TweetService tweetService;

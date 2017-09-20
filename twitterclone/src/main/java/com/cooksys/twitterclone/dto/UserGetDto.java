@@ -13,7 +13,7 @@ public class UserGetDto implements Comparable<UserGetDto>{
 
 	private String username;
 	private Timestamp joined;
-	private ProfileDto profileDto;
+	private ProfileDto profile;
 
 	/**
 	 * Default Constructor
@@ -24,11 +24,11 @@ public class UserGetDto implements Comparable<UserGetDto>{
 	 * @param username
 	 * @param joined
 	 */
-	public UserGetDto(String username, Timestamp joined, ProfileDto profileDto) {
+	public UserGetDto(String username, Timestamp joined, ProfileDto profile) {
 		this();
 		this.username = username;
 		this.joined = joined;
-		this.profileDto = profileDto;
+		this.profile = profile;
 	}
 
 	/**
@@ -60,17 +60,17 @@ public class UserGetDto implements Comparable<UserGetDto>{
 	}
 
 	/**
-	 * @return the profileDto
+	 * @return the profile
 	 */
-	public ProfileDto getProfileDto() {
-		return profileDto;
+	public ProfileDto getProfile() {
+		return profile;
 	}
 
 	/**
-	 * @param profileDto the profileDto to set
+	 * @param profile the profile to set
 	 */
-	public void setProfileDto(ProfileDto profileDto) {
-		this.profileDto = profileDto;
+	public void setProfile(ProfileDto profile) {
+		this.profile = profile;
 	}
 
 	@Override

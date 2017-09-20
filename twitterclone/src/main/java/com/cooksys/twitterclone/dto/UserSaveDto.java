@@ -9,8 +9,9 @@ package com.cooksys.twitterclone.dto;
  */
 public class UserSaveDto {
 
-	private CredentialsDto credentialsDto;
-	private ProfileDto profileDto;
+	private CredentialsDto credentials;
+	
+	private ProfileDto profile;
 	
 	/**
 	 * Default Constructor
@@ -19,40 +20,40 @@ public class UserSaveDto {
 
 	/**
 	 * @param credentials
-	 * @param profileSaveDto
+	 * @param profile
 	 */
-	public UserSaveDto(CredentialsDto credentialsDto, ProfileDto profileDto) {
+	public UserSaveDto(CredentialsDto credentials, ProfileDto profile) {
 		this();
-		this.credentialsDto = credentialsDto;
-		this.profileDto = profileDto;
+		this.credentials = credentials;
+		this.profile = profile;
 	}
 
 	/**
 	 * @return the credentials
 	 */
-	public CredentialsDto getCredentialsDto() {
-		return credentialsDto;
+	public CredentialsDto getCredentials() {
+		return credentials;
 	}
 
 	/**
 	 * @param credentials the credentials to set
 	 */
-	public void setCredentialsDto(CredentialsDto credentialsDto) {
-		this.credentialsDto = credentialsDto;
+	public void setCredentials(CredentialsDto credentials) {
+		this.credentials = credentials;
 	}
 
 	/**
-	 * @return the profileDto
+	 * @return the profile
 	 */
-	public ProfileDto getProfileDto() {
-		return profileDto;
+	public ProfileDto getProfile() {
+		return profile;
 	}
 
 	/**
-	 * @param profileDto the profileDto to set
+	 * @param profile the profile to set
 	 */
-	public void setProfileDto(ProfileDto profileDto) {
-		this.profileDto = profileDto;
+	public void setProfile(ProfileDto profile) {
+		this.profile = profile;
 	}
 	
 }

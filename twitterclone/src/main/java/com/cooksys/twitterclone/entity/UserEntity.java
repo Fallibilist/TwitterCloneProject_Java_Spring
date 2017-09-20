@@ -14,6 +14,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import com.cooksys.twitterclone.dto.UserGetDto;
 import com.cooksys.twitterclone.entity.embeddable.CredentialsEmbeddable;
 import com.cooksys.twitterclone.entity.embeddable.ProfileEmbeddable;
 
@@ -22,7 +23,7 @@ import com.cooksys.twitterclone.entity.embeddable.ProfileEmbeddable;
  *
  */
 @Entity
-public class UserEntity {
+public class UserEntity implements Comparable<UserEntity>{
 
 	@Id
 	@GeneratedValue
@@ -60,6 +61,7 @@ public class UserEntity {
 	 */
 	public UserEntity(Integer id, CredentialsEmbeddable credentials, ProfileEmbeddable profile, Timestamp joined,
 			TreeSet<TweetEntity> tweets) {
+		this();
 		this.id = id;
 		this.credentials = credentials;
 		this.profile = profile;
@@ -187,6 +189,11 @@ public class UserEntity {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	@Override
+	public int compareTo(UserEntity userToCompareTo) {
+		return credentials.getUsername().compareTo(userToCompareTo.getCredentials().getUsername());
 	}
 	
 }
