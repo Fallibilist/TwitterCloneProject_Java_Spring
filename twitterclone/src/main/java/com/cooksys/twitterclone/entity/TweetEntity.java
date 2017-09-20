@@ -1,0 +1,237 @@
+/**
+ * 
+ */
+package com.cooksys.twitterclone.entity;
+
+import java.sql.Timestamp;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+
+/**
+ * @author Greg Hill
+ *
+ */
+@Entity
+public class TweetEntity implements Comparable<TweetEntity> {
+	
+	@Id
+	@GeneratedValue
+	private Integer id;
+	
+	@ManyToOne
+	private UserEntity author;
+
+	@Column(nullable = false)
+	private Timestamp posted;
+	
+	private String content;
+
+    @OneToOne
+    @JoinColumn(name="in_reply_to_id")
+	private TweetEntity inReplyTo;
+
+    @OneToOne
+    @JoinColumn(name="repost_of_id")
+	private TweetEntity repostOf;
+	
+	@ManyToOne
+	private ContextEntity context;
+	
+	private Boolean active;
+	
+	/**
+	 * Default Constructor
+	 */
+	public TweetEntity() {
+		this.active = true;
+	}
+
+	/**
+	 * @param id
+	 * @param author
+	 * @param posted
+	 */
+	public TweetEntity(Integer id, UserEntity author, Timestamp posted) {
+		this();
+		this.id = id;
+		this.author = author;
+		this.posted = posted;
+	}
+
+	/**
+	 * @param id
+	 * @param author
+	 * @param posted
+	 * @param content
+	 * @param inReplyTo
+	 * @param repostOf
+	 */
+	public TweetEntity(Integer id, UserEntity author, Timestamp posted, String content, TweetEntity inReplyTo,
+			TweetEntity repostOf) {
+		this(id, author, posted);
+		this.content = content;
+		this.inReplyTo = inReplyTo;
+		this.repostOf = repostOf;
+	}
+
+	/**
+	 * @return the id
+	 */
+	public Integer getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	/**
+	 * @return the author
+	 */
+	public UserEntity getAuthor() {
+		return author;
+	}
+
+	/**
+	 * @param author the author to set
+	 */
+	public void setAuthor(UserEntity author) {
+		this.author = author;
+	}
+
+	/**
+	 * @return the posted
+	 */
+	public Timestamp getPosted() {
+		return posted;
+	}
+
+	/**
+	 * @param posted the posted to set
+	 */
+	public void setPosted(Timestamp posted) {
+		this.posted = posted;
+	}
+
+	/**
+	 * @return the content
+	 */
+	public String getContent() {
+		return content;
+	}
+
+	/**
+	 * @param content the content to set
+	 */
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	/**
+	 * @return the inReplyTo
+	 */
+	public TweetEntity getInReplyTo() {
+		return inReplyTo;
+	}
+
+	/**
+	 * @param inReplyTo the inReplyTo to set
+	 */
+	public void setInReplyTo(TweetEntity inReplyTo) {
+		this.inReplyTo = inReplyTo;
+	}
+
+	/**
+	 * @return the repostOf
+	 */
+	public TweetEntity getRepostOf() {
+		return repostOf;
+	}
+
+	/**
+	 * @param repostOf the repostOf to set
+	 */
+	public void setRepostOf(TweetEntity repostOf) {
+		this.repostOf = repostOf;
+	}
+
+	/**
+	 * @return the context
+	 */
+	public ContextEntity getContext() {
+		return context;
+	}
+
+	/**
+	 * @param context the context to set
+	 */
+	public void setContext(ContextEntity context) {
+		this.context = context;
+	}
+
+	/**
+	 * @return the active
+	 */
+	public Boolean getActive() {
+		return active;
+	}
+
+	/**
+	 * @param active the active to set
+	 */
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		TweetEntity other = (TweetEntity) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+
+	@Override
+	public int compareTo(TweetEntity tweetToCompare) {
+		if(this.id < tweetToCompare.getId()) {
+			return -1;
+		} else if(this.id > tweetToCompare.getId()) {
+			return 1;
+		} else {
+			return 0;
+		}
+	}
+}

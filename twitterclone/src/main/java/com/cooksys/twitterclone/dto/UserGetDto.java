@@ -9,11 +9,11 @@ import java.sql.Timestamp;
  * @author Greg Hill
  *
  */
-public class UserGetDto {
+public class UserGetDto implements Comparable<UserGetDto>{
 
 	private String username;
 	private Timestamp joined;
-	private ProfileGetDto profileGetDto;
+	private ProfileDto profileDto;
 
 	/**
 	 * Default Constructor
@@ -24,11 +24,11 @@ public class UserGetDto {
 	 * @param username
 	 * @param joined
 	 */
-	public UserGetDto(String username, Timestamp joined, ProfileGetDto profileGetDto) {
+	public UserGetDto(String username, Timestamp joined, ProfileDto profileDto) {
 		this();
 		this.username = username;
 		this.joined = joined;
-		this.profileGetDto = profileGetDto;
+		this.profileDto = profileDto;
 	}
 
 	/**
@@ -60,17 +60,22 @@ public class UserGetDto {
 	}
 
 	/**
-	 * @return the profileGetDto
+	 * @return the profileDto
 	 */
-	public ProfileGetDto getProfileGetDto() {
-		return profileGetDto;
+	public ProfileDto getProfileDto() {
+		return profileDto;
 	}
 
 	/**
-	 * @param profileGetDto the profileGetDto to set
+	 * @param profileDto the profileDto to set
 	 */
-	public void setProfileGetDto(ProfileGetDto profileGetDto) {
-		this.profileGetDto = profileGetDto;
+	public void setProfileDto(ProfileDto profileDto) {
+		this.profileDto = profileDto;
+	}
+
+	@Override
+	public int compareTo(UserGetDto userToCompareTo) {
+		return username.compareTo(userToCompareTo.getUsername());
 	}
 	
 }

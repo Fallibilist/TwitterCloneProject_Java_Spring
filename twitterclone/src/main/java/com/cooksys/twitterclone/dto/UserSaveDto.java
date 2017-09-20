@@ -3,8 +3,6 @@
  */
 package com.cooksys.twitterclone.dto;
 
-import java.sql.Timestamp;
-
 /**
  * @author Greg Hill
  *
@@ -12,7 +10,7 @@ import java.sql.Timestamp;
 public class UserSaveDto {
 
 	private CredentialsDto credentialsDto;
-	private ProfileSaveDto profileSaveDto;
+	private ProfileDto profileDto;
 	
 	/**
 	 * Default Constructor
@@ -23,10 +21,10 @@ public class UserSaveDto {
 	 * @param credentials
 	 * @param profileSaveDto
 	 */
-	public UserSaveDto(CredentialsDto credentialsDto, ProfileSaveDto profileSaveDto) {
+	public UserSaveDto(CredentialsDto credentialsDto, ProfileDto profileDto) {
 		this();
 		this.credentialsDto = credentialsDto;
-		this.profileSaveDto = profileSaveDto;
+		this.profileDto = profileDto;
 	}
 
 	/**
@@ -44,17 +42,17 @@ public class UserSaveDto {
 	}
 
 	/**
-	 * @return the profileSaveDto
+	 * @return the profileDto
 	 */
-	public ProfileSaveDto getProfileSaveDto() {
-		return profileSaveDto;
+	public ProfileDto getProfileDto() {
+		return profileDto;
 	}
 
 	/**
-	 * @param profileSaveDto the profileSaveDto to set
+	 * @param profileDto the profileDto to set
 	 */
-	public void setProfileSaveDto(ProfileSaveDto profileSaveDto) {
-		this.profileSaveDto = profileSaveDto;
+	public void setProfileDto(ProfileDto profileDto) {
+		this.profileDto = profileDto;
 	}
 	
 }

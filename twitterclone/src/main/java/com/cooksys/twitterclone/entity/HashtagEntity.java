@@ -1,35 +1,66 @@
 /**
  * 
  */
-package com.cooksys.twitterclone.dto;
+package com.cooksys.twitterclone.entity;
 
 import java.sql.Timestamp;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
 /**
  * @author Greg Hill
  *
  */
-public class HashtagGetDto {
+@Entity
+public class HashtagEntity {
 
+	@Id
+	@GeneratedValue
+	private Integer id;
+
+	@Column(nullable = false)
 	private String label;
+
+	@Column(nullable = false)
 	private Timestamp firstUsed;
-	private Timestamp lastUsed;
 	
+	@Column(nullable = false)
+	private Timestamp lastUsed;
+
 	/**
 	 * Default Constructor
 	 */
-	public HashtagGetDto() { }
-	
+	public HashtagEntity() { }
+
 	/**
+	 * @param id
 	 * @param label
 	 * @param firstUsed
 	 * @param lastUsed
 	 */
-	public HashtagGetDto(String label, Timestamp firstUsed, Timestamp lastUsed) {
+	public HashtagEntity(Integer id, String label, Timestamp firstUsed, Timestamp lastUsed) {
 		this();
+		this.id = id;
 		this.label = label;
 		this.firstUsed = firstUsed;
 		this.lastUsed = lastUsed;
+	}
+
+	/**
+	 * @return the id
+	 */
+	public Integer getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
 	/**
