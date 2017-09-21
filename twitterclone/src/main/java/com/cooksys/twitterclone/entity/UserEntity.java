@@ -143,7 +143,7 @@ public class UserEntity implements Comparable<UserEntity>{
 	 * @return the tweets
 	 */
 	public Set<TweetEntity> getTweets() {
-		if(tweets.equals(null)) {
+		if(tweets == null) {
 			tweets = new TreeSet<TweetEntity>();
 		}
 		return tweets;
@@ -160,7 +160,7 @@ public class UserEntity implements Comparable<UserEntity>{
 	 * @return the following
 	 */
 	public Set<UserEntity> getFollowing() {
-		if(following.equals(null)) {
+		if(following == null) {
 			following = new TreeSet<UserEntity>();
 		}
 		return following;
@@ -177,7 +177,7 @@ public class UserEntity implements Comparable<UserEntity>{
 	 * @return the followers
 	 */
 	public Set<UserEntity> getFollowers() {
-		if(followers.equals(null)) {
+		if(followers == null) {
 			followers = new TreeSet<UserEntity>();
 		}
 		
@@ -195,6 +195,9 @@ public class UserEntity implements Comparable<UserEntity>{
 	 * @return the mentionedInTweets
 	 */
 	public Set<TweetEntity> getMentionedInTweets() {
+		if(mentionedInTweets == null) {
+			mentionedInTweets = new TreeSet<TweetEntity>();
+		}
 		return mentionedInTweets;
 	}
 
@@ -209,6 +212,9 @@ public class UserEntity implements Comparable<UserEntity>{
 	 * @return the likedTweets
 	 */
 	public Set<TweetEntity> getLikedTweets() {
+		if(likedTweets == null) {
+			likedTweets = new TreeSet<TweetEntity>();
+		}
 		return likedTweets;
 	}
 

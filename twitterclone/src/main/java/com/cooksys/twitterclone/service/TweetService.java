@@ -16,9 +16,11 @@ import com.cooksys.twitterclone.dto.ContextDto;
 import com.cooksys.twitterclone.dto.CredentialsDto;
 import com.cooksys.twitterclone.dto.HashtagGetDto;
 import com.cooksys.twitterclone.dto.TweetGetDto;
+import com.cooksys.twitterclone.dto.TweetRepostDto;
 import com.cooksys.twitterclone.dto.TweetSaveDto;
 import com.cooksys.twitterclone.dto.UserGetDto;
 import com.cooksys.twitterclone.entity.ContextEntity;
+import com.cooksys.twitterclone.entity.HashtagEntity;
 import com.cooksys.twitterclone.entity.TweetEntity;
 import com.cooksys.twitterclone.entity.UserEntity;
 import com.cooksys.twitterclone.entity.embeddable.CredentialsEmbeddable;
@@ -27,7 +29,9 @@ import com.cooksys.twitterclone.mapper.HashtagMapper;
 import com.cooksys.twitterclone.mapper.TweetMapper;
 import com.cooksys.twitterclone.mapper.UserMapper;
 import com.cooksys.twitterclone.repository.ContextJpaRepository;
+import com.cooksys.twitterclone.repository.HashtagJpaRepository;
 import com.cooksys.twitterclone.repository.TweetJpaRepository;
+import com.cooksys.twitterclone.repository.UserJpaRepository;
 import com.cooksys.twitterclone.utilities.Utilities;
 
 /**
@@ -39,6 +43,8 @@ public class TweetService {
 	
 	private TweetJpaRepository tweetJpaRepository;
 	private ContextJpaRepository contextJpaRepository;
+	private UserJpaRepository userJpaRepository;
+	private HashtagJpaRepository hashtagJpaRepository;
 	private TweetMapper tweetMapper;
 	private CredentialsMapper credentialsMapper;
 	private HashtagMapper hashtagMapper;
@@ -48,11 +54,14 @@ public class TweetService {
 	
 	private final TweetGetDto ERROR = null;
 
-	public TweetService(TweetJpaRepository tweetJpaRespository, ContextJpaRepository contextJpaRepository, TweetMapper tweetMapper, 
+	public TweetService(TweetJpaRepository tweetJpaRepository, ContextJpaRepository contextJpaRepository, 
+			UserJpaRepository userJpaRepository, HashtagJpaRepository hashtagJpaRepository, TweetMapper tweetMapper, 
 			CredentialsMapper credentialsMapper, HashtagMapper hashtagMapper, UserMapper userMapper, ValidateService validateService, 
 			UserService userService) {
 		this.tweetJpaRepository = tweetJpaRepository;
 		this.contextJpaRepository = contextJpaRepository;
+		this.userJpaRepository = userJpaRepository;
+		this.hashtagJpaRepository = hashtagJpaRepository;
 		this.tweetMapper = tweetMapper;
 		this.credentialsMapper = credentialsMapper;
 		this.hashtagMapper = hashtagMapper;
@@ -66,7 +75,13 @@ public class TweetService {
 	}
 
 	public Set<TweetGetDto> getTweets() {
-		return tweetMapper.toDto(tweetJpaRepository.findByActive(true)).descendingSet();
+		TreeSet<TweetGetDto> tweets = tweetMapper.toDto(tweetJpaRepository.findByActive(true));
+		
+		if(tweets == null) {
+			return null;
+		} else {
+			return tweets.descendingSet();			
+		}
 	}
 
 	public TweetGetDto postTweet(TweetSaveDto tweetSaveDto) {
@@ -84,9 +99,9 @@ public class TweetService {
 		
 		ContextEntity context = new ContextEntity();
 		tweet.setContext(context);
-		
-		tweetJpaRepository.save(tweet);
+
 		contextJpaRepository.save(context);
+		tweetJpaRepository.save(tweet);
 		
 		return tweetMapper.toDtoGet(tweet);
 	}
@@ -160,31 +175,38 @@ public class TweetService {
 		return tweetMapper.toDtoGet(tweet);
 	}
 
-	public TweetGetDto repostOfTweet(Integer id, CredentialsDto credentialsDto) {
+	public TweetRepostDto repostOfTweet(Integer id, CredentialsDto credentialsDto) {
 		TweetEntity tweet = new TweetEntity();
 		CredentialsEmbeddable credentials = credentialsMapper.fromDto(credentialsDto);
 		
 		// Ensures that the credentials match a valid user and the post requested exists
 		if(!validateService.validateCredentials(credentials) || !validateService.getTweetExists(id)) {
-			return ERROR;
+			return null;
 		}
 		
 		tweet.setAuthor(validateService.pullUser(credentials.getUsername()));
 		tweet.setPosted(Utilities.currentTime());
 		tweet.setRepostOf(pullTweet(id));
 		tweet = joinContext(tweet, id);
+		tweet.setContent(pullTweet(id).getContent());
 		tweet = storeTagsAndMentions(tweet);
+		tweet.setContent(null);
 		
 		tweetJpaRepository.save(tweet);
-		return tweetMapper.toDtoGet(tweet);
+		return tweetMapper.toDtoRepost(tweet);
 	}
 
 	public Set<HashtagGetDto> getTweetTags(Integer id) {
-		return hashtagMapper.toDto(pullTweet(id).getHashtags());
+		return hashtagMapper
+				.toDto(pullTweet(id)
+				.getHashtags()
+				.stream()
+				.collect(Collectors.toCollection(TreeSet::new)));
 	}
 
 	public Set<UserGetDto> getTweetLikes(Integer id) {
-		return userMapper.toDto(pullTweet(id)
+		return userMapper
+				.toDto(pullTweet(id)
 				.getLikes()
 				.stream()
 				.filter(user -> user.getActive().equals(true))
@@ -215,23 +237,26 @@ public class TweetService {
 	}
 
 	public Set<TweetGetDto> getReplies(Integer id) {
-		return tweetMapper.toDto(tweetJpaRepository
-				.findByInReplyToIs(id)
+		return tweetMapper
+				.toDto(tweetJpaRepository
+				.findByInReplyToIs(pullTweet(id))
 				.stream()
 				.filter(tweet -> tweet.getActive().equals(true))
 				.collect(Collectors.toCollection(TreeSet::new)));
 	}
 
 	public Set<TweetGetDto> getReposts(Integer id) {
-		return tweetMapper.toDto(tweetJpaRepository
-				.findByRepostOfIs(id)
+		return tweetMapper
+				.toDto(tweetJpaRepository
+				.findByRepostOfIs(pullTweet(id))
 				.stream()
 				.filter(tweet -> tweet.getActive().equals(true))
 				.collect(Collectors.toCollection(TreeSet::new)));
 	}
 
 	public Set<UserGetDto> getMentions(Integer id) {
-		return userMapper.toDto(pullTweet(id)
+		return userMapper
+				.toDto(pullTweet(id)
 				.getMentionedUsers()
 				.stream()
 				.filter(user -> user.getActive().equals(true))
@@ -241,9 +266,9 @@ public class TweetService {
 	private TweetEntity joinContext(TweetEntity tweet, Integer id) {
 		TweetEntity parent = pullTweet(id);
 		
-		if(!parent.getInReplyTo().equals(null)) {
+		if(!(parent.getInReplyTo() == null)) {
 			return joinContext(tweet, parent.getInReplyTo().getId());
-		} else if(!parent.getRepostOf().equals(null)) {
+		} else if(!(parent.getRepostOf() == null)) {
 			return joinContext(tweet, parent.getRepostOf().getId());
 		} else {
 			tweet.setContext(parent.getContext());
@@ -290,9 +315,21 @@ public class TweetService {
 			for(String character : content) {
 				if(character.equals(" ") && newHashtagTrigger) {
 					newHashtagTrigger = false;
-					if(validateService.getTagExists(hashtag.toString())) {
-						tweet.getHashtags().add(validateService.pullTag(hashtag.toString()));
+					
+					HashtagEntity hashtagEntity;
+					if(!validateService.getTagExists(hashtag.toString())) {
+						hashtagEntity = new HashtagEntity();
+						hashtagEntity.setLabel(hashtag.toString());
+						hashtagEntity.setFirstUsed(Utilities.currentTime());
+						hashtagEntity.setLastUsed(Utilities.currentTime());
+						hashtagJpaRepository.saveAndFlush(hashtagEntity);
+					} else {
+						hashtagEntity = validateService.pullTag(hashtag.toString());
+						hashtagEntity.setLastUsed(Utilities.currentTime());
+						hashtagJpaRepository.saveAndFlush(hashtagEntity);
 					}
+					tweet.getHashtags().add(hashtagEntity);
+					
 					hashtag = new StringBuffer("");
 				}
 				
@@ -300,17 +337,31 @@ public class TweetService {
 					hashtag.append(character);
 				}
 				
-				if(character.equals("@")) {
+				if(character.equals("#")) {
 					newHashtagTrigger = true;
 				}
 			}
 			
 			if(newHashtagTrigger) {
-				if(validateService.getTagExists(hashtag.toString())) {
-					tweet.getHashtags().add(validateService.pullTag(hashtag.toString()));
+				HashtagEntity hashtagEntity;
+				if(!validateService.getTagExists(hashtag.toString())) {
+					hashtagEntity = new HashtagEntity();
+					hashtagEntity.setLabel(hashtag.toString());
+					hashtagEntity.setFirstUsed(Utilities.currentTime());
+					hashtagEntity.setLastUsed(Utilities.currentTime());
+					hashtagJpaRepository.saveAndFlush(hashtagEntity);
+				} else {
+					hashtagEntity = validateService.pullTag(hashtag.toString());
+					hashtagEntity.setLastUsed(Utilities.currentTime());
+					hashtagJpaRepository.saveAndFlush(hashtagEntity);
 				}
+				tweet.getHashtags().add(hashtagEntity);
 			}
 		}
+		
+		hashtagJpaRepository.save(tweet.getHashtags());
+		userJpaRepository.save(tweet.getMentionedUsers());
+		tweetJpaRepository.saveAndFlush(tweet);
 		
 		return tweet;
 	}

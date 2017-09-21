@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -77,6 +78,18 @@ public class UserController {
 		} 
 		
 		return patchedUser;
+	}
+	
+	@PutMapping("/@{username}/")
+	public UserGetDto putUser(@PathVariable String username, @RequestBody UserSaveDto userSaveDto, HttpServletResponse response) {
+		UserGetDto placedUser = userService.putUser(username, userSaveDto);
+		
+		if(placedUser == ERROR) {
+			response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+			return ERROR;
+		} 
+		
+		return placedUser;
 	}
 	
 	@DeleteMapping("/@{username}/")

@@ -3,11 +3,11 @@
  */
 package com.cooksys.twitterclone.mapper;
 
+import java.sql.Timestamp;
 import java.util.TreeSet;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
 
 import com.cooksys.twitterclone.dto.UserGetDto;
 import com.cooksys.twitterclone.dto.UserSaveDto;
@@ -20,9 +20,7 @@ import com.cooksys.twitterclone.entity.UserEntity;
 @Mapper(componentModel="spring")
 public interface UserMapper {
 
-	@Mappings({
-		@Mapping(source = "credentials.username", target = "username")
-	})
+	@Mapping(source = "credentials.username", target = "username")
 	UserGetDto toDtoGet(UserEntity userEntity);
 	
 	default UserEntity fromDtoSave(UserSaveDto userSaveDto, ProfileMapper profileMapper, CredentialsMapper credentialsMapper) {
@@ -34,5 +32,9 @@ public interface UserMapper {
     }
 	
 	TreeSet<UserGetDto> toDto(TreeSet<UserEntity> users);
+	
+	default Long timestampToLong(Timestamp timestamp) {
+		return timestamp.getTime();
+	}
 	
 }

@@ -3,8 +3,8 @@
  */
 package com.cooksys.twitterclone.mapper;
 
-import java.util.List;
-import java.util.Set;
+import java.sql.Timestamp;
+import java.util.TreeSet;
 
 import org.mapstruct.Mapper;
 
@@ -18,8 +18,13 @@ import com.cooksys.twitterclone.entity.HashtagEntity;
 @Mapper(componentModel="spring")
 public interface HashtagMapper {
 	
+	
 	HashtagGetDto toDto(HashtagEntity entity);
 
-	Set<HashtagGetDto> toDto(Set<HashtagEntity> set);
+	TreeSet<HashtagGetDto> toDto(TreeSet<HashtagEntity> set);
+	
+	default Long timestampToLong(Timestamp timestamp) {
+		return timestamp.getTime();
+	}
 	
 }

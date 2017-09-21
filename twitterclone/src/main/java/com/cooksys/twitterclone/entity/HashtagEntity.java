@@ -5,6 +5,7 @@ package com.cooksys.twitterclone.entity;
 
 import java.sql.Timestamp;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,7 +18,7 @@ import javax.persistence.ManyToMany;
  *
  */
 @Entity
-public class HashtagEntity {
+public class HashtagEntity implements Comparable<HashtagEntity>{
 
 	@Id
 	@GeneratedValue
@@ -114,6 +115,9 @@ public class HashtagEntity {
 	 * @return the tweets
 	 */
 	public Set<TweetEntity> getTweets() {
+		if(tweets == null) {
+			tweets = new TreeSet<TweetEntity>();
+		}
 		return tweets;
 	}
 
@@ -122,6 +126,11 @@ public class HashtagEntity {
 	 */
 	public void setTweets(Set<TweetEntity> tweets) {
 		this.tweets = tweets;
+	}
+
+	@Override
+	public int compareTo(HashtagEntity tagToCompare) {
+		return this.getLabel().compareTo(tagToCompare.getLabel());
 	}
 	
 }

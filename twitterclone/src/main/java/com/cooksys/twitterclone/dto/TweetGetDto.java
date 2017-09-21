@@ -13,7 +13,7 @@ public class TweetGetDto implements Comparable<TweetGetDto>{
 
 	private Integer id;
 	private UserGetDto author;
-	private Timestamp posted;
+	private Long posted;
 	private String content;
 	
 	/**
@@ -27,7 +27,7 @@ public class TweetGetDto implements Comparable<TweetGetDto>{
 	 * @param posted
 	 * @param content
 	 */
-	public TweetGetDto(Integer id, UserGetDto author, Timestamp posted, String content) {
+	public TweetGetDto(Integer id, UserGetDto author, Long posted, String content) {
 		this();
 		this.id = id;
 		this.author = author;
@@ -66,14 +66,14 @@ public class TweetGetDto implements Comparable<TweetGetDto>{
 	/**
 	 * @return the posted
 	 */
-	public Timestamp getPosted() {
+	public Long getPosted() {
 		return posted;
 	}
 
 	/**
 	 * @param posted the posted to set
 	 */
-	public void setPosted(Timestamp posted) {
+	public void setPosted(Long posted) {
 		this.posted = posted;
 	}
 

@@ -112,7 +112,37 @@ public class UserService {
 		}
 		
 		user = pullUser(username);
-		user.setCredentials(newCredentials);
+		if(newProfile.getEmail() != null) {
+			user.getProfile().setEmail(newProfile.getEmail());;
+		}
+		if(newProfile.getFirstName() != null) {
+			user.getProfile().setFirstName(newProfile.getFirstName());;
+		}
+		if(newProfile.getLastName() != null) {
+			user.getProfile().setLastName(newProfile.getLastName());;
+		}
+		if(newProfile.getPhone() != null) {
+			user.getProfile().setPhone(newProfile.getPhone());;
+		}
+		
+		userJpaRepository.save(user);
+		return userMapper.toDtoGet(user);
+	}
+
+	public UserGetDto putUser(String username, UserSaveDto userSaveDto) {
+		UserEntity user = userMapper.fromDtoSave(userSaveDto, profileMapper, credentialsMapper);
+		CredentialsEmbeddable newCredentials = user.getCredentials();
+		ProfileEmbeddable newProfile = user.getProfile();
+
+		// Checks if the user exists and if the credentials are correct
+		if(!validateService.getUsernameExists(username) || 
+			!validateService.validateCredentials(newCredentials) ||
+			!username.equals(newCredentials.getUsername()) ||
+			user.getProfile().getEmail().equals(null)) {
+			return ERROR;
+		}
+		
+		user = pullUser(username);
 		user.setProfile(newProfile);
 		
 		userJpaRepository.save(user);

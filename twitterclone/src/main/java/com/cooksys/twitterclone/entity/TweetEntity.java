@@ -5,6 +5,7 @@ package com.cooksys.twitterclone.entity;
 
 import java.sql.Timestamp;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -137,7 +138,11 @@ public class TweetEntity implements Comparable<TweetEntity> {
 	 * @return the content
 	 */
 	public String getContent() {
-		return content;
+		if(repostOf != null) {
+			return repostOf.getContent();
+		} else {
+			return content;
+		}
 	}
 
 	/**
@@ -193,6 +198,9 @@ public class TweetEntity implements Comparable<TweetEntity> {
 	 * @return the mentionedUsers
 	 */
 	public Set<UserEntity> getMentionedUsers() {
+		if(mentionedUsers == null) {
+			mentionedUsers = new TreeSet<UserEntity>();
+		}
 		return mentionedUsers;
 	}
 
@@ -207,6 +215,9 @@ public class TweetEntity implements Comparable<TweetEntity> {
 	 * @return the hashtags
 	 */
 	public Set<HashtagEntity> getHashtags() {
+		if(hashtags == null) {
+			hashtags = new TreeSet<HashtagEntity>();
+		}
 		return hashtags;
 	}
 
@@ -221,6 +232,9 @@ public class TweetEntity implements Comparable<TweetEntity> {
 	 * @return the likes
 	 */
 	public Set<UserEntity> getLikes() {
+		if(likes == null) {
+			likes = new TreeSet<UserEntity>();
+		}
 		return likes;
 	}
 

@@ -1,4 +1,4 @@
-/**
+	/**
  * 
  */
 package com.cooksys.twitterclone.entity;
@@ -59,7 +59,7 @@ public class ContextEntity {
 	 * @return the fullTweetContext
 	 */
 	public Set<TweetEntity> getFullTweetContext() {
-		if(fullTweetContext.equals(null)) {
+		if(fullTweetContext == null) {
 			fullTweetContext = new TreeSet<TweetEntity>();
 		}
 		

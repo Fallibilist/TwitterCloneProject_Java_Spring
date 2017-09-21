@@ -12,7 +12,7 @@ import java.sql.Timestamp;
 public class UserGetDto implements Comparable<UserGetDto>{
 
 	private String username;
-	private Timestamp joined;
+	private Long joined;
 	private ProfileDto profile;
 
 	/**
@@ -24,7 +24,7 @@ public class UserGetDto implements Comparable<UserGetDto>{
 	 * @param username
 	 * @param joined
 	 */
-	public UserGetDto(String username, Timestamp joined, ProfileDto profile) {
+	public UserGetDto(String username, Long joined, ProfileDto profile) {
 		this();
 		this.username = username;
 		this.joined = joined;
@@ -48,14 +48,14 @@ public class UserGetDto implements Comparable<UserGetDto>{
 	/**
 	 * @return the joined
 	 */
-	public Timestamp getJoined() {
+	public Long getJoined() {
 		return joined;
 	}
 
 	/**
 	 * @param joined the joined to set
 	 */
-	public void setJoined(Timestamp joined) {
+	public void setJoined(Long joined) {
 		this.joined = joined;
 	}
 

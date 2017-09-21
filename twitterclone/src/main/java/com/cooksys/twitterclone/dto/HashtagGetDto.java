@@ -5,15 +5,17 @@ package com.cooksys.twitterclone.dto;
 
 import java.sql.Timestamp;
 
+import com.cooksys.twitterclone.entity.HashtagEntity;
+
 /**
  * @author Greg Hill
  *
  */
-public class HashtagGetDto {
+public class HashtagGetDto implements Comparable<HashtagGetDto>{
 
 	private String label;
-	private Timestamp firstUsed;
-	private Timestamp lastUsed;
+	private Long firstUsed;
+	private Long lastUsed;
 	
 	/**
 	 * Default Constructor
@@ -25,7 +27,7 @@ public class HashtagGetDto {
 	 * @param firstUsed
 	 * @param lastUsed
 	 */
-	public HashtagGetDto(String label, Timestamp firstUsed, Timestamp lastUsed) {
+	public HashtagGetDto(String label, Long firstUsed, Long lastUsed) {
 		this();
 		this.label = label;
 		this.firstUsed = firstUsed;
@@ -49,29 +51,34 @@ public class HashtagGetDto {
 	/**
 	 * @return the firstUsed
 	 */
-	public Timestamp getFirstUsed() {
+	public Long getFirstUsed() {
 		return firstUsed;
 	}
 
 	/**
 	 * @param firstUsed the firstUsed to set
 	 */
-	public void setFirstUsed(Timestamp firstUsed) {
+	public void setFirstUsed(Long firstUsed) {
 		this.firstUsed = firstUsed;
 	}
 
 	/**
 	 * @return the lastUsed
 	 */
-	public Timestamp getLastUsed() {
+	public Long getLastUsed() {
 		return lastUsed;
 	}
 
 	/**
 	 * @param lastUsed the lastUsed to set
 	 */
-	public void setLastUsed(Timestamp lastUsed) {
+	public void setLastUsed(Long lastUsed) {
 		this.lastUsed = lastUsed;
+	}
+
+	@Override
+	public int compareTo(HashtagGetDto tagToCompare) {
+		return this.getLabel().compareTo(tagToCompare.getLabel());
 	}
 	
 }

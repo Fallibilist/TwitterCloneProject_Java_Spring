@@ -19,6 +19,7 @@ import com.cooksys.twitterclone.dto.ContextDto;
 import com.cooksys.twitterclone.dto.CredentialsDto;
 import com.cooksys.twitterclone.dto.HashtagGetDto;
 import com.cooksys.twitterclone.dto.TweetGetDto;
+import com.cooksys.twitterclone.dto.TweetRepostDto;
 import com.cooksys.twitterclone.dto.TweetSaveDto;
 import com.cooksys.twitterclone.dto.UserGetDto;
 import com.cooksys.twitterclone.service.TweetService;
@@ -108,12 +109,12 @@ public class TweetController {
 	}
 	
 	@PostMapping("/{id}/repost/")
-	public TweetGetDto repostOfTweet(@PathVariable Integer id, @RequestBody CredentialsDto credentialsDto, HttpServletResponse response) {
-		TweetGetDto repost = tweetService.repostOfTweet(id, credentialsDto);
+	public TweetRepostDto repostOfTweet(@PathVariable Integer id, @RequestBody CredentialsDto credentialsDto, HttpServletResponse response) {
+		TweetRepostDto repost = tweetService.repostOfTweet(id, credentialsDto);
 		
-		if(repost == ERROR) {
+		if(repost == null) {
 			response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
-			return ERROR;
+			return null;
 		} 
 		
 		return repost;

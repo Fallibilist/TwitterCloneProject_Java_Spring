@@ -19,8 +19,8 @@ public interface TweetJpaRepository extends JpaRepository<TweetEntity, Integer> 
 	
 	TreeSet<TweetEntity> findByContentContaining(String searchTerm);
 
-	TreeSet<TweetEntity> findByInReplyToIs(Integer id);
+	TreeSet<TweetEntity> findByInReplyToIs(TweetEntity id);
 	
-	TreeSet<TweetEntity> findByRepostOfIs(Integer id);
+	TreeSet<TweetEntity> findByRepostOfIs(TweetEntity id);
 	
 }
