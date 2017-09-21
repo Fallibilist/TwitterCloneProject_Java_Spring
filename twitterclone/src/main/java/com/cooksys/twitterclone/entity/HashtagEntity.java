@@ -4,11 +4,13 @@
 package com.cooksys.twitterclone.entity;
 
 import java.sql.Timestamp;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 
 /**
  * @author Greg Hill
@@ -29,6 +31,9 @@ public class HashtagEntity {
 	
 	@Column(nullable = false)
 	private Timestamp lastUsed;
+	
+	@ManyToMany(mappedBy = "hashtags")
+	private Set<TweetEntity> tweets;
 
 	/**
 	 * Default Constructor
@@ -103,6 +108,20 @@ public class HashtagEntity {
 	 */
 	public void setLastUsed(Timestamp lastUsed) {
 		this.lastUsed = lastUsed;
+	}
+
+	/**
+	 * @return the tweets
+	 */
+	public Set<TweetEntity> getTweets() {
+		return tweets;
+	}
+
+	/**
+	 * @param tweets the tweets to set
+	 */
+	public void setTweets(Set<TweetEntity> tweets) {
+		this.tweets = tweets;
 	}
 	
 }

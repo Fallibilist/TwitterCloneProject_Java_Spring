@@ -3,6 +3,9 @@
  */
 package com.cooksys.twitterclone.mapper;
 
+import java.util.Set;
+import java.util.TreeSet;
+
 import org.mapstruct.Mapper;
 
 import com.cooksys.twitterclone.dto.TweetGetDto;
@@ -15,13 +18,11 @@ import com.cooksys.twitterclone.entity.TweetEntity;
  */
 @Mapper(componentModel="spring")
 public interface TweetMapper {
-	
-	TweetEntity fromDtoGet(TweetGetDto tweetGetDto);
-	
-	TweetGetDto fromEntityGet(TweetEntity tweetEntity);
+
+	TweetGetDto toDtoGet(TweetEntity tweet);
 	
 	TweetEntity fromDtoSave(TweetSaveDto tweetGetDto);
-	
-	TweetSaveDto fromEntitySave(TweetEntity tweetEntity);
+
+	TreeSet<TweetGetDto> toDto(TreeSet<TweetEntity> allTweets);
 	
 }

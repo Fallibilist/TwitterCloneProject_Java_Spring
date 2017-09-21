@@ -3,6 +3,9 @@
  */
 package com.cooksys.twitterclone.mapper;
 
+import java.util.List;
+import java.util.Set;
+
 import org.mapstruct.Mapper;
 
 import com.cooksys.twitterclone.dto.HashtagGetDto;
@@ -15,8 +18,8 @@ import com.cooksys.twitterclone.entity.HashtagEntity;
 @Mapper(componentModel="spring")
 public interface HashtagMapper {
 	
-	HashtagEntity fromDto(HashtagGetDto dto);
-	
 	HashtagGetDto toDto(HashtagEntity entity);
+
+	Set<HashtagGetDto> toDto(Set<HashtagEntity> set);
 	
 }

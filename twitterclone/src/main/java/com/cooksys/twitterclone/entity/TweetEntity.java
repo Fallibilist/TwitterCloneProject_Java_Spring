@@ -4,13 +4,14 @@
 package com.cooksys.twitterclone.entity;
 
 import java.sql.Timestamp;
+import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
@@ -44,6 +45,15 @@ public class TweetEntity implements Comparable<TweetEntity> {
 	@ManyToOne
 	private ContextEntity context;
 	
+	@ManyToMany
+	private Set<UserEntity> mentionedUsers;
+	
+	@ManyToMany
+	private Set<HashtagEntity> hashtags;
+	
+	@ManyToMany
+	private Set<UserEntity> likes;
+
 	private Boolean active;
 	
 	/**
@@ -177,6 +187,48 @@ public class TweetEntity implements Comparable<TweetEntity> {
 	 */
 	public void setContext(ContextEntity context) {
 		this.context = context;
+	}
+
+	/**
+	 * @return the mentionedUsers
+	 */
+	public Set<UserEntity> getMentionedUsers() {
+		return mentionedUsers;
+	}
+
+	/**
+	 * @param mentionedUsers the mentionedUsers to set
+	 */
+	public void setMentionedUsers(Set<UserEntity> mentionedUsers) {
+		this.mentionedUsers = mentionedUsers;
+	}
+
+	/**
+	 * @return the hashtags
+	 */
+	public Set<HashtagEntity> getHashtags() {
+		return hashtags;
+	}
+
+	/**
+	 * @param hashtags the hashtags to set
+	 */
+	public void setHashtags(Set<HashtagEntity> hashtags) {
+		this.hashtags = hashtags;
+	}
+	
+	/**
+	 * @return the likes
+	 */
+	public Set<UserEntity> getLikes() {
+		return likes;
+	}
+
+	/**
+	 * @param likes the likes to set
+	 */
+	public void setLikes(Set<UserEntity> likes) {
+		this.likes = likes;
 	}
 
 	/**

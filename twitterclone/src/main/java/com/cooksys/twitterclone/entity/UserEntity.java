@@ -12,9 +12,9 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
-import com.cooksys.twitterclone.dto.UserGetDto;
 import com.cooksys.twitterclone.entity.embeddable.CredentialsEmbeddable;
 import com.cooksys.twitterclone.entity.embeddable.ProfileEmbeddable;
 
@@ -43,6 +43,18 @@ public class UserEntity implements Comparable<UserEntity>{
 	@OneToMany(mappedBy = "author")
 	private Set<TweetEntity> tweets;
 	
+	@ManyToMany
+	private Set<UserEntity> following;
+	
+	@ManyToMany(mappedBy = "following")
+	private Set<UserEntity> followers;
+
+	@ManyToMany(mappedBy = "mentionedUsers")
+	private Set<TweetEntity> mentionedInTweets;
+	
+	@ManyToMany(mappedBy = "likes")
+	private Set<UserEntity> likedTweets;
+
 	private Boolean active;
 
 	/**
@@ -60,13 +72,15 @@ public class UserEntity implements Comparable<UserEntity>{
 	 * @param tweets
 	 */
 	public UserEntity(Integer id, CredentialsEmbeddable credentials, ProfileEmbeddable profile, Timestamp joined,
-			TreeSet<TweetEntity> tweets) {
+			TreeSet<TweetEntity> tweets, TreeSet<UserEntity> following, TreeSet<UserEntity> followers) {
 		this();
 		this.id = id;
 		this.credentials = credentials;
 		this.profile = profile;
 		this.joined = joined;
 		this.tweets = tweets;
+		this.following = following;
+		this.followers = followers;
 	}
 
 	/**
@@ -128,15 +142,81 @@ public class UserEntity implements Comparable<UserEntity>{
 	/**
 	 * @return the tweets
 	 */
-	public TreeSet<TweetEntity> getTweets() {
-		return (TreeSet<TweetEntity>)tweets;
+	public Set<TweetEntity> getTweets() {
+		if(tweets.equals(null)) {
+			tweets = new TreeSet<TweetEntity>();
+		}
+		return tweets;
 	}
 
 	/**
 	 * @param tweets the tweets to set
 	 */
-	public void setTweets(TreeSet<TweetEntity> tweets) {
+	public void setTweets(Set<TweetEntity> tweets) {
 		this.tweets = tweets;
+	}
+	
+	/**
+	 * @return the following
+	 */
+	public Set<UserEntity> getFollowing() {
+		if(following.equals(null)) {
+			following = new TreeSet<UserEntity>();
+		}
+		return following;
+	}
+
+	/**
+	 * @param following the following to set
+	 */
+	public void setFollowing(Set<UserEntity> following) {
+		this.following = following;
+	}
+
+	/**
+	 * @return the followers
+	 */
+	public Set<UserEntity> getFollowers() {
+		if(followers.equals(null)) {
+			followers = new TreeSet<UserEntity>();
+		}
+		
+		return followers;
+	}
+
+	/**
+	 * @param followers the followers to set
+	 */
+	public void setFollowers(Set<UserEntity> followers) {
+		this.followers = followers;
+	}
+
+	/**
+	 * @return the mentionedInTweets
+	 */
+	public Set<TweetEntity> getMentionedInTweets() {
+		return mentionedInTweets;
+	}
+
+	/**
+	 * @param mentionedInTweets the mentionedInTweets to set
+	 */
+	public void setMentionedInTweets(Set<TweetEntity> mentionedInTweets) {
+		this.mentionedInTweets = mentionedInTweets;
+	}
+	
+	/**
+	 * @return the likedTweets
+	 */
+	public Set<UserEntity> getLikedTweets() {
+		return likedTweets;
+	}
+
+	/**
+	 * @param likedTweets the likedTweets to set
+	 */
+	public void setLikedTweets(Set<UserEntity> likedTweets) {
+		this.likedTweets = likedTweets;
 	}
 
 	/**
@@ -151,13 +231,6 @@ public class UserEntity implements Comparable<UserEntity>{
 	 */
 	public void setActive(Boolean active) {
 		this.active = active;
-	}
-
-	/**
-	 * @param tweets the tweets to set
-	 */
-	public void setTweets(Set<TweetEntity> tweets) {
-		this.tweets = tweets;
 	}
 
 	/* (non-Javadoc)

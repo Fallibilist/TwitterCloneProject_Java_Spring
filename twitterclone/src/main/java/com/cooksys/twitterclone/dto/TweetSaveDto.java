@@ -10,7 +10,7 @@ package com.cooksys.twitterclone.dto;
 public class TweetSaveDto {
 
 	private String content;
-	private CredentialsDto credentialsDto;
+	private CredentialsDto credentials;
 	
 	/**
 	 * Default Constructor
@@ -21,10 +21,10 @@ public class TweetSaveDto {
 	 * @param content
 	 * @param credentialsDto
 	 */
-	public TweetSaveDto(String content, CredentialsDto credentialsDto) {
+	public TweetSaveDto(String content, CredentialsDto credentials) {
 		this();
 		this.content = content;
-		this.credentialsDto = credentialsDto;
+		this.credentials = credentials;
 	}
 	
 	/**
@@ -44,15 +44,15 @@ public class TweetSaveDto {
 	/**
 	 * @return the credentialsDto
 	 */
-	public CredentialsDto getCredentialsDto() {
-		return credentialsDto;
+	public CredentialsDto getCredentials() {
+		return credentials;
 	}
 	
 	/**
 	 * @param credentialsDto the credentialsDto to set
 	 */
-	public void setCredentialsDto(CredentialsDto credentialsDto) {
-		this.credentialsDto = credentialsDto;
+	public void setCredentials(CredentialsDto credentials) {
+		this.credentials = credentials;
 	}
 	
 }

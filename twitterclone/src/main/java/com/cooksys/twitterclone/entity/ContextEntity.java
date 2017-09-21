@@ -59,6 +59,10 @@ public class ContextEntity {
 	 * @return the fullTweetContext
 	 */
 	public Set<TweetEntity> getFullTweetContext() {
+		if(fullTweetContext.equals(null)) {
+			fullTweetContext = new TreeSet<TweetEntity>();
+		}
+		
 		return fullTweetContext;
 	}
 

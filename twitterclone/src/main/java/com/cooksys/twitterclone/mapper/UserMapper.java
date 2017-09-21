@@ -3,13 +3,12 @@
  */
 package com.cooksys.twitterclone.mapper;
 
-import java.util.Set;
+import java.util.TreeSet;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 
-import com.cooksys.twitterclone.dto.UserDeleteDto;
 import com.cooksys.twitterclone.dto.UserGetDto;
 import com.cooksys.twitterclone.dto.UserSaveDto;
 import com.cooksys.twitterclone.entity.UserEntity;
@@ -34,10 +33,6 @@ public interface UserMapper {
         return user;
     }
 	
-	UserEntity fromDtoDelete(UserDeleteDto userDeleteDto);
-	
-	UserDeleteDto toDtoDelete(UserEntity userEntity);
-	
-	Set<UserGetDto> toDto(Set<UserEntity> users);
+	TreeSet<UserGetDto> toDto(TreeSet<UserEntity> users);
 	
 }
