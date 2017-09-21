@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 /**
@@ -43,8 +44,11 @@ public class TweetEntity implements Comparable<TweetEntity> {
     @JoinColumn(name="repost_of_id")
 	private TweetEntity repostOf;
 	
-	@ManyToOne
-	private ContextEntity context;
+    @ManyToOne
+    private TweetEntity parent;
+    
+	@OneToMany(mappedBy = "parent")
+	private Set<TweetEntity> directChildren;
 	
 	@ManyToMany
 	private Set<UserEntity> mentionedUsers;
@@ -181,17 +185,34 @@ public class TweetEntity implements Comparable<TweetEntity> {
 	}
 
 	/**
-	 * @return the context
+	 * @return the parent
 	 */
-	public ContextEntity getContext() {
-		return context;
+	public TweetEntity getParent() {
+		return parent;
 	}
 
 	/**
-	 * @param context the context to set
+	 * @param parent the parent to set
 	 */
-	public void setContext(ContextEntity context) {
-		this.context = context;
+	public void setParent(TweetEntity parent) {
+		this.parent = parent;
+	}
+
+	/**
+	 * @return the directChildren
+	 */
+	public Set<TweetEntity> getDirectChildren() {
+		if(directChildren == null) {
+			directChildren = new TreeSet<TweetEntity>();
+		}
+		return directChildren;
+	}
+
+	/**
+	 * @param directChildren the directChildren to set
+	 */
+	public void setDirectChildren(Set<TweetEntity> directChildren) {
+		this.directChildren = directChildren;
 	}
 
 	/**

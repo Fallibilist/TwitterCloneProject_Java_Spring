@@ -4,17 +4,17 @@
 package com.cooksys.twitterclone.mapper;
 
 import java.sql.Timestamp;
-import java.util.Set;
 import java.util.TreeSet;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
 
 import com.cooksys.twitterclone.dto.TweetGetDto;
 import com.cooksys.twitterclone.dto.TweetRepostDto;
 import com.cooksys.twitterclone.dto.TweetSaveDto;
+import com.cooksys.twitterclone.dto.UserGetDto;
 import com.cooksys.twitterclone.entity.TweetEntity;
+import com.cooksys.twitterclone.entity.UserEntity;
 
 /**
  * @author Greg Hill
@@ -24,6 +24,9 @@ import com.cooksys.twitterclone.entity.TweetEntity;
 public interface TweetMapper {
 
 	TweetGetDto toDtoGet(TweetEntity tweet);
+	
+	@Mapping(source = "credentials.username", target = "username")
+	UserGetDto toUserDtoGet(UserEntity user);
 	
 	TweetEntity fromDtoSave(TweetSaveDto tweetGetDto);
 

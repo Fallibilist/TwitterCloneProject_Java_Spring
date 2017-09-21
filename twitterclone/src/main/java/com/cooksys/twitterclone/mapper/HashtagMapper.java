@@ -18,8 +18,7 @@ import com.cooksys.twitterclone.entity.HashtagEntity;
 @Mapper(componentModel="spring")
 public interface HashtagMapper {
 	
-	
-	HashtagGetDto toDto(HashtagEntity entity);
+	HashtagGetDto toDtoGet(HashtagEntity entity);
 
 	TreeSet<HashtagGetDto> toDto(TreeSet<HashtagEntity> set);
 	

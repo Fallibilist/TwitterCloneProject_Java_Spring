@@ -19,7 +19,6 @@ import com.cooksys.twitterclone.dto.TweetGetDto;
 import com.cooksys.twitterclone.dto.TweetRepostDto;
 import com.cooksys.twitterclone.dto.TweetSaveDto;
 import com.cooksys.twitterclone.dto.UserGetDto;
-import com.cooksys.twitterclone.entity.ContextEntity;
 import com.cooksys.twitterclone.entity.HashtagEntity;
 import com.cooksys.twitterclone.entity.TweetEntity;
 import com.cooksys.twitterclone.entity.UserEntity;
@@ -28,7 +27,6 @@ import com.cooksys.twitterclone.mapper.CredentialsMapper;
 import com.cooksys.twitterclone.mapper.HashtagMapper;
 import com.cooksys.twitterclone.mapper.TweetMapper;
 import com.cooksys.twitterclone.mapper.UserMapper;
-import com.cooksys.twitterclone.repository.ContextJpaRepository;
 import com.cooksys.twitterclone.repository.HashtagJpaRepository;
 import com.cooksys.twitterclone.repository.TweetJpaRepository;
 import com.cooksys.twitterclone.repository.UserJpaRepository;
@@ -42,7 +40,6 @@ import com.cooksys.twitterclone.utilities.Utilities;
 public class TweetService {
 	
 	private TweetJpaRepository tweetJpaRepository;
-	private ContextJpaRepository contextJpaRepository;
 	private UserJpaRepository userJpaRepository;
 	private HashtagJpaRepository hashtagJpaRepository;
 	private TweetMapper tweetMapper;
@@ -54,12 +51,10 @@ public class TweetService {
 	
 	private final TweetGetDto ERROR = null;
 
-	public TweetService(TweetJpaRepository tweetJpaRepository, ContextJpaRepository contextJpaRepository, 
-			UserJpaRepository userJpaRepository, HashtagJpaRepository hashtagJpaRepository, TweetMapper tweetMapper, 
-			CredentialsMapper credentialsMapper, HashtagMapper hashtagMapper, UserMapper userMapper, ValidateService validateService, 
-			UserService userService) {
+	public TweetService(TweetJpaRepository tweetJpaRepository, UserJpaRepository userJpaRepository, 
+			HashtagJpaRepository hashtagJpaRepository, TweetMapper tweetMapper, CredentialsMapper credentialsMapper, 
+			HashtagMapper hashtagMapper, UserMapper userMapper, ValidateService validateService, UserService userService) {
 		this.tweetJpaRepository = tweetJpaRepository;
-		this.contextJpaRepository = contextJpaRepository;
 		this.userJpaRepository = userJpaRepository;
 		this.hashtagJpaRepository = hashtagJpaRepository;
 		this.tweetMapper = tweetMapper;
@@ -96,11 +91,7 @@ public class TweetService {
 		tweet.setAuthor(validateService.pullUser(credentials.getUsername()));
 		tweet.setPosted(Utilities.currentTime());
 		tweet = storeTagsAndMentions(tweet);
-		
-		ContextEntity context = new ContextEntity();
-		tweet.setContext(context);
 
-		contextJpaRepository.save(context);
 		tweetJpaRepository.save(tweet);
 		
 		return tweetMapper.toDtoGet(tweet);
@@ -167,7 +158,7 @@ public class TweetService {
 		tweet.setAuthor(validateService.pullUser(credentials.getUsername()));
 		tweet.setPosted(Utilities.currentTime());
 		tweet.setInReplyTo(pullTweet(id));
-		tweet = joinContext(tweet, id);
+		tweet.setParent(pullTweet(id));
 		tweet = storeTagsAndMentions(tweet);
 		
 		tweetJpaRepository.save(tweet);
@@ -187,7 +178,7 @@ public class TweetService {
 		tweet.setAuthor(validateService.pullUser(credentials.getUsername()));
 		tweet.setPosted(Utilities.currentTime());
 		tweet.setRepostOf(pullTweet(id));
-		tweet = joinContext(tweet, id);
+		tweet.setParent(pullTweet(id));
 		tweet.setContent(pullTweet(id).getContent());
 		tweet = storeTagsAndMentions(tweet);
 		tweet.setContent(null);
@@ -218,19 +209,16 @@ public class TweetService {
 		TreeSet<TweetEntity> before = new TreeSet<TweetEntity>();
 		TreeSet<TweetEntity> after = new TreeSet<TweetEntity>();
 		
-		primaryTweet
-			.getContext()
-			.getFullTweetContext()
-			.stream()
-			.forEach(tweet -> {
-				if(tweet.getActive().equals(true)) {
-					if(tweet.getId() < primaryTweet.getId()) {
-						before.add(tweet);
-					} else if(tweet.getId() > primaryTweet.getId()) {
-						after.add(tweet);
-					}
-				}
-			});
+		TweetEntity parent = primaryTweet.getParent();
+		while(parent != null) {
+			if(parent.getActive()) {
+				before.add(parent);
+			}
+			parent = parent.getParent();
+		}
+		
+		getChildTweets(primaryTweet, after);
+		
 		return new ContextDto(tweetMapper.toDtoGet(primaryTweet), 
 					tweetMapper.toDto(before), 
 					tweetMapper.toDto(before));
@@ -261,19 +249,6 @@ public class TweetService {
 				.stream()
 				.filter(user -> user.getActive().equals(true))
 				.collect(Collectors.toCollection(TreeSet::new)));
-	}
-	
-	private TweetEntity joinContext(TweetEntity tweet, Integer id) {
-		TweetEntity parent = pullTweet(id);
-		
-		if(!(parent.getInReplyTo() == null)) {
-			return joinContext(tweet, parent.getInReplyTo().getId());
-		} else if(!(parent.getRepostOf() == null)) {
-			return joinContext(tweet, parent.getRepostOf().getId());
-		} else {
-			tweet.setContext(parent.getContext());
-			return tweet;
-		}
 	}
 
 	private TweetEntity storeTagsAndMentions(TweetEntity tweet){
@@ -365,5 +340,17 @@ public class TweetService {
 		
 		return tweet;
 	}
-	
+
+	private void getChildTweets(TweetEntity primaryTweet, TreeSet<TweetEntity> after) {
+		if(!primaryTweet.getDirectChildren().isEmpty()) {
+			after
+				.addAll(primaryTweet
+				.getDirectChildren()
+				.stream().filter(tweet -> tweet.getActive())
+				.collect(Collectors.toCollection(TreeSet::new)));
+			primaryTweet
+				.getDirectChildren()
+				.forEach(child -> getChildTweets(child, after));
+		}
+	}
 }
