@@ -45,7 +45,6 @@ public class TweetController {
 	
 	@GetMapping
 	public Set<TweetGetDto> getTweets() {
-		//tweetService.getTweets().forEach(tweet -> System.out.println(tweet.getAuthor().getUsername()));
 		return tweetService.getTweets();
 	}
 	
