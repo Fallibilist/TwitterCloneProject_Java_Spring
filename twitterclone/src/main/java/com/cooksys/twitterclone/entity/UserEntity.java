@@ -53,7 +53,7 @@ public class UserEntity implements Comparable<UserEntity>{
 	private Set<TweetEntity> mentionedInTweets;
 	
 	@ManyToMany(mappedBy = "likes")
-	private Set<UserEntity> likedTweets;
+	private Set<TweetEntity> likedTweets;
 
 	private Boolean active;
 
@@ -208,14 +208,14 @@ public class UserEntity implements Comparable<UserEntity>{
 	/**
 	 * @return the likedTweets
 	 */
-	public Set<UserEntity> getLikedTweets() {
+	public Set<TweetEntity> getLikedTweets() {
 		return likedTweets;
 	}
 
 	/**
 	 * @param likedTweets the likedTweets to set
 	 */
-	public void setLikedTweets(Set<UserEntity> likedTweets) {
+	public void setLikedTweets(Set<TweetEntity> likedTweets) {
 		this.likedTweets = likedTweets;
 	}
 
