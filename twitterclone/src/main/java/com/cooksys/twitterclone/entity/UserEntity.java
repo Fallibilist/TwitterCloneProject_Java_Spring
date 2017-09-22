@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
+import com.cooksys.twitterclone.dto.UserGetDto;
 import com.cooksys.twitterclone.entity.embeddable.CredentialsEmbeddable;
 import com.cooksys.twitterclone.entity.embeddable.ProfileEmbeddable;
 
@@ -54,6 +55,9 @@ public class UserEntity implements Comparable<UserEntity>{
 	
 	@ManyToMany(mappedBy = "likes")
 	private Set<TweetEntity> likedTweets;
+	
+	@OneToMany(mappedBy = "deactivatedUser")
+	private Set<TweetEntity> deletedTweets;
 
 	private Boolean active;
 
@@ -237,6 +241,23 @@ public class UserEntity implements Comparable<UserEntity>{
 	 */
 	public void setActive(Boolean active) {
 		this.active = active;
+	}
+
+	/**
+	 * @return the deletedTweetIds
+	 */
+	public Set<TweetEntity> getDeletedTweets() {
+		if(deletedTweets == null) {
+			deletedTweets = new TreeSet<TweetEntity>();
+		}
+		return deletedTweets;
+	}
+
+	/**
+	 * @param deletedTweetIds the deletedTweetIds to set
+	 */
+	public void setDeletedTweets(Set<TweetEntity> deletedTweets) {
+		this.deletedTweets = deletedTweets;
 	}
 
 	/* (non-Javadoc)

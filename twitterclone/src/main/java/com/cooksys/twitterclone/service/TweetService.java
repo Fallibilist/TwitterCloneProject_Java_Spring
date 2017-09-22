@@ -221,7 +221,7 @@ public class TweetService {
 		
 		return new ContextDto(tweetMapper.toDtoGet(primaryTweet), 
 					tweetMapper.toDto(before), 
-					tweetMapper.toDto(before));
+					tweetMapper.toDto(after));
 	}
 
 	public Set<TweetGetDto> getReplies(Integer id) {

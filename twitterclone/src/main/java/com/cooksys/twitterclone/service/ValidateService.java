@@ -87,7 +87,11 @@ public class ValidateService {
 	 */
 	public Boolean validateCredentials(CredentialsEmbeddable credentials) {
 		UserEntity user = pullUser(credentials.getUsername());
-		return user.getCredentials().getPassword().equals(credentials.getPassword());
+		if(user != null) {
+			return user.getCredentials().getPassword().equals(credentials.getPassword());
+		} else {
+			return false;
+		}
 	}
 
 	/**

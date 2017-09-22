@@ -3,6 +3,7 @@
  */
 package com.cooksys.twitterclone.service;
 
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -80,6 +81,21 @@ public class UserService {
 			if(validateService.validateCredentials(credentials)) {
 				user = pullUser(credentials.getUsername());
 				user.setActive(true);
+				
+				// Reactivates any non-deleted tweets
+				Set<TweetEntity> deletedTweets = user.getDeletedTweets();
+
+				// For debugging
+				deletedTweets.forEach(tweet -> System.out.println(tweet.getId()));
+				System.out.println("GRE\n\n\n\ngdfgfd\n\n\nsgsg\n\n\n");
+				user.getDeletedTweets().forEach(tweet -> System.out.println(tweet.getId()));
+				
+				user.getTweets().forEach(tweet -> {
+					if(!deletedTweets.contains(tweet)) {
+						tweet.setActive(true);
+					}
+				});
+				
 				userJpaRepository.save(user);
 				return userMapper.toDtoGet(user);
 			} else {
@@ -161,6 +177,16 @@ public class UserService {
 		
 		UserEntity user = pullUser(username);
 		user.setActive(false);
+		
+		user.getTweets()
+			.forEach(tweet -> {
+				if(!tweet.getActive()) {
+					tweet.setDeactivatedUser(user);
+				}
+			});
+		
+		user.getTweets()
+			.forEach(tweet -> tweet.setActive(false));
 		
 		userJpaRepository.save(user);
 		return userMapper.toDtoGet(user);
@@ -246,7 +272,7 @@ public class UserService {
 		});
 		
 		user.getFollowing().forEach(follow -> {
-			user.getTweets().forEach(tweet -> {
+			follow.getTweets().forEach(tweet -> {
 				if(tweet.getActive()) {
 					allTweets.add(tweet);
 				}
@@ -273,19 +299,7 @@ public class UserService {
 	}
 
 	public Set<TweetGetDto> getMentions(String username) {
-		TreeSet<TweetEntity> allTweets = new TreeSet<TweetEntity>();
-		StringBuffer atUsername = new StringBuffer("@");
-		
-		atUsername.append(username);
-
-		// Gets all tweets of the current user
-		tweetJpaRepository.findByContentContaining(atUsername.toString()).forEach(tweet -> {
-			if(tweet.getActive()) {
-				allTweets.add(tweet);
-			}
-		});
-		
 		// Turns the tweets into dtos and reverses their order
-		return tweetMapper.toDto(allTweets).descendingSet();
+		return tweetMapper.toDto(new TreeSet<>(pullUser(username).getMentionedInTweets())).descendingSet();
 	}
 }

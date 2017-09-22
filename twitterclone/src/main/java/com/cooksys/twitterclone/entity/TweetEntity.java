@@ -58,6 +58,9 @@ public class TweetEntity implements Comparable<TweetEntity> {
 	
 	@ManyToMany
 	private Set<UserEntity> likes;
+	
+	@ManyToOne
+	private UserEntity deactivatedUser;
 
 	private Boolean active;
 	
@@ -264,6 +267,20 @@ public class TweetEntity implements Comparable<TweetEntity> {
 	 */
 	public void setLikes(Set<UserEntity> likes) {
 		this.likes = likes;
+	}
+
+	/**
+	 * @return the deactivatedUser
+	 */
+	public UserEntity getDeactivatedUser() {
+		return deactivatedUser;
+	}
+
+	/**
+	 * @param deactivatedUser the deactivatedUser to set
+	 */
+	public void setDeactivatedUser(UserEntity deactivatedUser) {
+		this.deactivatedUser = deactivatedUser;
 	}
 
 	/**
