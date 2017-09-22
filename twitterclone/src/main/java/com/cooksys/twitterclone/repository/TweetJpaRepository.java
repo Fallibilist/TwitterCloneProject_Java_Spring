@@ -16,8 +16,6 @@ import com.cooksys.twitterclone.entity.TweetEntity;
 public interface TweetJpaRepository extends JpaRepository<TweetEntity, Integer> {
 
 	TreeSet<TweetEntity> findByActive(Boolean active);
-	
-	TreeSet<TweetEntity> findByContentContaining(String searchTerm);
 
 	TreeSet<TweetEntity> findByInReplyToIs(TweetEntity id);
 	

@@ -136,7 +136,7 @@ public class UserService {
 	 * @param userSaveDto
 	 * @return a modified user
 	 */
-	public UserGetDto patchUser(String username, UserSaveDto userSaveDto) {
+	public synchronized UserGetDto patchUser(String username, UserSaveDto userSaveDto) {
 		UserEntity user = userMapper.fromDtoSave(userSaveDto, profileMapper, credentialsMapper);
 		CredentialsEmbeddable newCredentials = user.getCredentials();
 		ProfileEmbeddable newProfile = user.getProfile();
@@ -174,7 +174,7 @@ public class UserService {
 	 * @param userSaveDto
 	 * @return a user whose profile has been overwritten by input data
 	 */
-	public UserGetDto putUser(String username, UserSaveDto userSaveDto) {
+	public synchronized UserGetDto putUser(String username, UserSaveDto userSaveDto) {
 		UserEntity user = userMapper.fromDtoSave(userSaveDto, profileMapper, credentialsMapper);
 		CredentialsEmbeddable newCredentials = user.getCredentials();
 		ProfileEmbeddable newProfile = user.getProfile();
@@ -198,7 +198,7 @@ public class UserService {
 	 * @param credentialsDto
 	 * @return the deleted user
 	 */
-	public UserGetDto deleteUser(String username, CredentialsDto credentialsDto) {
+	public synchronized UserGetDto deleteUser(String username, CredentialsDto credentialsDto) {
 		CredentialsEmbeddable credentials = credentialsMapper.fromDto(credentialsDto);
 
 		if(!validateService.getUsernameExists(username) || 
@@ -257,7 +257,7 @@ public class UserService {
 	 * @param credentialsDto
 	 * @return the user that was unfollowed
 	 */
-	public UserGetDto unfollowUser(String username, CredentialsDto credentialsDto) {
+	public synchronized UserGetDto unfollowUser(String username, CredentialsDto credentialsDto) {
 		CredentialsEmbeddable credentials = credentialsMapper.fromDto(credentialsDto);
 
 		if(!validateService.getUsernameExists(username) || 

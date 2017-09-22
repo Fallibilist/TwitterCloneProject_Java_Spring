@@ -5,7 +5,6 @@ package com.cooksys.twitterclone.service;
 
 import org.springframework.stereotype.Service;
 
-import com.cooksys.twitterclone.dto.TweetGetDto;
 import com.cooksys.twitterclone.entity.HashtagEntity;
 import com.cooksys.twitterclone.entity.TweetEntity;
 import com.cooksys.twitterclone.entity.UserEntity;

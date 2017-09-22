@@ -10,11 +10,9 @@ import org.springframework.stereotype.Service;
 
 import com.cooksys.twitterclone.dto.HashtagGetDto;
 import com.cooksys.twitterclone.dto.TweetGetDto;
-import com.cooksys.twitterclone.entity.TweetEntity;
 import com.cooksys.twitterclone.mapper.HashtagMapper;
 import com.cooksys.twitterclone.mapper.TweetMapper;
 import com.cooksys.twitterclone.repository.HashtagJpaRepository;
-import com.cooksys.twitterclone.repository.TweetJpaRepository;
 
 /**
  * @author Greg Hill
@@ -24,35 +22,40 @@ import com.cooksys.twitterclone.repository.TweetJpaRepository;
 public class HashtagService {
 
 	private HashtagJpaRepository hashtagJpaRepository;
-	private TweetJpaRepository tweetJpaRepository;
+	
 	private HashtagMapper hashtagMapper;
+	
 	private TweetMapper tweetMapper;
+	
+	private ValidateService validateService;
 
-	public HashtagService(HashtagJpaRepository hashtagJpaRepository, TweetJpaRepository tweetJpaRepository, HashtagMapper hashtagMapper, TweetMapper tweetMapper) {
+	/**
+	 * Constructor injecting repositories, mappers, and services
+	 * @param hashtagJpaRepository
+	 * @param hashtagMapper
+	 * @param tweetMapper
+	 * @param validateService
+	 */
+	public HashtagService(HashtagJpaRepository hashtagJpaRepository, HashtagMapper hashtagMapper, 
+			TweetMapper tweetMapper, ValidateService validateService) {
 		this.hashtagJpaRepository = hashtagJpaRepository;
-		this.tweetJpaRepository = tweetJpaRepository;
 		this.hashtagMapper = hashtagMapper;
 		this.tweetMapper = tweetMapper;
+		this.validateService = validateService;
 	}
 
+	/**
+	 * @return a sorted set of all tags
+	 */
 	public Set<HashtagGetDto> getTags() {
 		return hashtagMapper.toDto(new TreeSet<>(hashtagJpaRepository.findAll()));
 	}
 
+	/**
+	 * @param label
+	 * @return a reverse chronological set of all tweets with the given tag
+	 */
 	public Set<TweetGetDto> getTweetsByTag(String label) {
-		TreeSet<TweetEntity> allTweets = new TreeSet<TweetEntity>();
-		StringBuffer hashtagLabel = new StringBuffer("#");
-		
-		hashtagLabel.append(label);
-
-		// Gets all tweets with the tag
-		tweetJpaRepository.findByContentContaining(hashtagLabel.toString()).forEach(tweet -> {
-			if(tweet.getActive()) {
-				allTweets.add(tweet);
-			}
-		});
-		
-		// Turns the tweets into dtos and reverses their order
-		return tweetMapper.toDto(allTweets).descendingSet();
+		return tweetMapper.toDto(new TreeSet<>(validateService.pullTag(label).getTweets())).descendingSet();
 	}
 }

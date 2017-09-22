@@ -147,7 +147,7 @@ public class TweetService {
 	 * @param credentialsDto
 	 * @return the deleted tweet
 	 */
-	public TweetGetDto deleteTweet(Integer id, CredentialsDto credentialsDto) {
+	public synchronized TweetGetDto deleteTweet(Integer id, CredentialsDto credentialsDto) {
 		CredentialsEmbeddable credentials = credentialsMapper.fromDto(credentialsDto);
 
 		if(!validateService.getTweetExists(id) || 
