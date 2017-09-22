@@ -84,22 +84,6 @@ public class TweetEntity implements Comparable<TweetEntity> {
 	}
 
 	/**
-	 * @param id
-	 * @param author
-	 * @param posted
-	 * @param content
-	 * @param inReplyTo
-	 * @param repostOf
-	 */
-	public TweetEntity(Integer id, UserEntity author, Timestamp posted, String content, TweetEntity inReplyTo,
-			TweetEntity repostOf) {
-		this(id, author, posted);
-		this.content = content;
-		this.inReplyTo = inReplyTo;
-		this.repostOf = repostOf;
-	}
-
-	/**
 	 * @return the id
 	 */
 	public Integer getId() {

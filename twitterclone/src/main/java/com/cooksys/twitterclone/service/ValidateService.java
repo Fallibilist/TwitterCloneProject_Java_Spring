@@ -5,6 +5,7 @@ package com.cooksys.twitterclone.service;
 
 import org.springframework.stereotype.Service;
 
+import com.cooksys.twitterclone.dto.TweetGetDto;
 import com.cooksys.twitterclone.entity.HashtagEntity;
 import com.cooksys.twitterclone.entity.TweetEntity;
 import com.cooksys.twitterclone.entity.UserEntity;
@@ -25,33 +26,67 @@ import com.cooksys.twitterclone.repository.UserJpaRepository;
 public class ValidateService {
 	
 	private HashtagJpaRepository hashtagJpaRepository;
+	
 	private UserJpaRepository userJpaRepository;
+	
 	private TweetJpaRepository tweetJpaRepository;
+	
+	private final TweetEntity ERROR_TWEET = null;
+	
+	private final HashtagEntity ERROR_TAG = null;
+	
+	private final UserEntity ERROR_USER = null;
 
+	/**
+	 * Constructor injecting repositories
+	 * @param hashtagJpaRepository
+	 * @param userJpaRepository
+	 * @param tweetJpaRepository
+	 */
 	public ValidateService(HashtagJpaRepository hashtagJpaRepository, UserJpaRepository userJpaRepository, TweetJpaRepository tweetJpaRepository) {
 		this.hashtagJpaRepository = hashtagJpaRepository;
 		this.userJpaRepository = userJpaRepository;
 		this.tweetJpaRepository = tweetJpaRepository;
 	}
 	
+	/**
+	 * @param username
+	 * @return a user by username
+	 */
 	public UserEntity pullUser(String username) {
 		return userJpaRepository.findByCredentialsUsername(username);
 	}
 	
+	/**
+	 * @param label
+	 * @return a hashtag by label
+	 */
 	public HashtagEntity pullTag(String label) {
 		return hashtagJpaRepository.findByLabel(label);
 	}
 	
+	/**
+	 * @param label
+	 * @return whether or not the given label is associated with a hashtag in the database
+	 */
 	public Boolean getTagExists(String label) {
-		return pullTag(label) != null;
+		return pullTag(label) != ERROR_TAG;
 	}
 
+	/**
+	 * @param id
+	 * @return a tweet by id
+	 */
 	public TweetEntity pullTweet(Integer id) {
 		return tweetJpaRepository.findOne(id);
 	}
 	
+	/**
+	 * @param id
+	 * @return whether or not the given tweet exists in the database and is active
+	 */
 	public Boolean getTweetExists(Integer id) {
-		return pullTweet(id) != null && pullTweet(id).getActive();
+		return pullTweet(id) != ERROR_TWEET && pullTweet(id).getActive();
 	}
 	
 	/**
@@ -60,7 +95,7 @@ public class ValidateService {
 	 */
 	public Boolean getUsernameAvailable(String username) {
 		UserEntity user = pullUser(username);
-		return user == null;
+		return user == ERROR_USER;
 	}
 
 	/**
@@ -69,7 +104,7 @@ public class ValidateService {
 	 */
 	public Boolean getUsernameExists(String username) {
 		UserEntity user = pullUser(username);
-		return (user != null && user.getActive());
+		return (user != ERROR_USER && user.getActive());
 	}
 
 	/**
@@ -78,7 +113,7 @@ public class ValidateService {
 	 */
 	public Boolean getUsernameInactive(String username) {
 		UserEntity user = pullUser(username);
-		return (user != null && !user.getActive());
+		return (user != ERROR_USER && !user.getActive());
 	}
 
 	/**
@@ -87,7 +122,7 @@ public class ValidateService {
 	 */
 	public Boolean validateCredentials(CredentialsEmbeddable credentials) {
 		UserEntity user = pullUser(credentials.getUsername());
-		if(user != null) {
+		if(user != ERROR_USER) {
 			return user.getCredentials().getPassword().equals(credentials.getPassword());
 		} else {
 			return false;
@@ -109,6 +144,10 @@ public class ValidateService {
 		}
 	}
 
+	/**
+	 * @param tweet
+	 * @return validates the fields of the new tweet
+	 */
 	public Boolean validTweetFields(TweetEntity tweet) {
 		if(tweet.getContent() == null) {
 			return false;

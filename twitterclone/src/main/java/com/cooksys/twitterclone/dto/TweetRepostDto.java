@@ -3,8 +3,6 @@
  */
 package com.cooksys.twitterclone.dto;
 
-import java.sql.Timestamp;
-
 /**
  * @author Greg Hill
  *

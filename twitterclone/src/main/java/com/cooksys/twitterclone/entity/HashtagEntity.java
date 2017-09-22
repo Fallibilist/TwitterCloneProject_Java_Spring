@@ -42,20 +42,6 @@ public class HashtagEntity implements Comparable<HashtagEntity>{
 	public HashtagEntity() { }
 
 	/**
-	 * @param id
-	 * @param label
-	 * @param firstUsed
-	 * @param lastUsed
-	 */
-	public HashtagEntity(Integer id, String label, Timestamp firstUsed, Timestamp lastUsed) {
-		this();
-		this.id = id;
-		this.label = label;
-		this.firstUsed = firstUsed;
-		this.lastUsed = lastUsed;
-	}
-
-	/**
 	 * @return the id
 	 */
 	public Integer getId() {

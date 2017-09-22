@@ -10,10 +10,11 @@ package com.cooksys.twitterclone.dto;
 public class CredentialsDto {
 
 	private String username;
+	
 	private String password;
 	
 	/**
-	 * 
+	 * Default Constructor
 	 */
 	public CredentialsDto() { }
 

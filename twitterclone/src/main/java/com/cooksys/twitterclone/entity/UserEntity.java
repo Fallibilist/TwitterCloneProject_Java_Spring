@@ -15,7 +15,6 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
-import com.cooksys.twitterclone.dto.UserGetDto;
 import com.cooksys.twitterclone.entity.embeddable.CredentialsEmbeddable;
 import com.cooksys.twitterclone.entity.embeddable.ProfileEmbeddable;
 
@@ -66,25 +65,6 @@ public class UserEntity implements Comparable<UserEntity>{
 	 */
 	public UserEntity() {
 		this.active = true;
-	}
-
-	/**
-	 * @param id
-	 * @param credentials
-	 * @param profile
-	 * @param joined
-	 * @param tweets
-	 */
-	public UserEntity(Integer id, CredentialsEmbeddable credentials, ProfileEmbeddable profile, Timestamp joined,
-			TreeSet<TweetEntity> tweets, TreeSet<UserEntity> following, TreeSet<UserEntity> followers) {
-		this();
-		this.id = id;
-		this.credentials = credentials;
-		this.profile = profile;
-		this.joined = joined;
-		this.tweets = tweets;
-		this.following = following;
-		this.followers = followers;
 	}
 
 	/**
@@ -291,6 +271,9 @@ public class UserEntity implements Comparable<UserEntity>{
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
 	@Override
 	public int compareTo(UserEntity userToCompareTo) {
 		return credentials.getUsername().compareTo(userToCompareTo.getCredentials().getUsername());

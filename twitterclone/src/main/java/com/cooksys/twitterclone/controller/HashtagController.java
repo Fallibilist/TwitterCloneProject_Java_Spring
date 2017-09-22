@@ -25,21 +25,35 @@ import com.cooksys.twitterclone.service.HashtagService;
 public class HashtagController {
 
 	private HashtagService hashtagService;
+	
+	private final Set<TweetGetDto> ERROR_SET = null;
 
+	/**
+	 * Constructor injecting service
+	 * @param hashtagService
+	 */
 	public HashtagController(HashtagService hashtagService) {
 		this.hashtagService = hashtagService;
 	}
 	
+	/**
+	 * @return all hashtags that are tracked by the server
+	 */
 	@GetMapping
 	public Set<HashtagGetDto> getTags() {
 		return hashtagService.getTags();
 	}
 
+	/**
+	 * @param label
+	 * @param response
+	 * @return all tweets containing the given label
+	 */
 	@GetMapping("/{label}/")
 	public Set<TweetGetDto> getTweetsByTag(@PathVariable String label, HttpServletResponse response) {
 		Set<TweetGetDto> matchingTweets = hashtagService.getTweetsByTag(label);
 			
-		if(matchingTweets == null) {
+		if(matchingTweets == ERROR_SET) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 		} 
 		

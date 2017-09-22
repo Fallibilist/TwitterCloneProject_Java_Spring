@@ -3,8 +3,6 @@
  */
 package com.cooksys.twitterclone.dto;
 
-import java.sql.Timestamp;
-
 /**
  * @author Greg Hill
  *
@@ -12,7 +10,9 @@ import java.sql.Timestamp;
 public class UserGetDto implements Comparable<UserGetDto>{
 
 	private String username;
+	
 	private Long joined;
+	
 	private ProfileDto profile;
 
 	/**

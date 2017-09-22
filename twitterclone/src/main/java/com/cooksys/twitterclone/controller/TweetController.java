@@ -34,20 +34,46 @@ import com.cooksys.twitterclone.service.ValidateService;
 public class TweetController {
 	
 	private TweetService tweetService;
+	
 	private ValidateService validateService;
 	
 	private final TweetGetDto ERROR = null;
+	
+	private final TweetGetDto SUCCESS = null;
+	
+	private final TweetRepostDto ERROR_REPOST = null;
 
+	private final ContextDto ERROR_CONTEXT = null;
+	
+	private final Set<TweetGetDto> ERROR_TSET = null;
+	
+	private final Set<UserGetDto> ERROR_USET = null;
+	
+	private final Set<HashtagGetDto> ERROR_HSET = null;
+
+	/**
+	 * Constructor injecting services
+	 * @param tweetService
+	 * @param validateService
+	 */
 	public TweetController(TweetService tweetService, ValidateService validateService) {
 		this.tweetService = tweetService;
 		this.validateService = validateService;
 	}
 	
+	/**
+	 * @return all tweets tracked by the server
+	 */
 	@GetMapping
 	public Set<TweetGetDto> getTweets() {
 		return tweetService.getTweets();
 	}
 	
+	/**
+	 * @param tweetSaveDto
+	 * @param response
+	 * @return tweet that was created
+	 */
 	@PostMapping
 	public TweetGetDto postTweet(@RequestBody TweetSaveDto tweetSaveDto, HttpServletResponse response) {
 		TweetGetDto postedTweet = tweetService.postTweet(tweetSaveDto);
@@ -60,6 +86,11 @@ public class TweetController {
 		return postedTweet;
 	}
 
+	/**
+	 * @param id
+	 * @param response
+	 * @return tweet whose id matches the request
+	 */
 	@GetMapping("/{id}/")
 	public TweetGetDto getTweet(@PathVariable Integer id, HttpServletResponse response) {
 		TweetGetDto tweet = tweetService.getTweet(id);
@@ -72,6 +103,12 @@ public class TweetController {
 		return tweet;
 	}
 	
+	/**
+	 * @param id
+	 * @param credentialsDto
+	 * @param response
+	 * @return a representation of the deleted tweet
+	 */
 	@DeleteMapping("/{id}/")
 	public TweetGetDto deleteTweet(@PathVariable Integer id, @RequestBody CredentialsDto credentialsDto, HttpServletResponse response) {
 		TweetGetDto deletedTweet = tweetService.deleteTweet(id, credentialsDto);
@@ -84,6 +121,12 @@ public class TweetController {
 		return deletedTweet;
 	}
 	
+	/**
+	 * @param id
+	 * @param credentialsDto
+	 * @param response
+	 * @return the tweet that was liked by user
+	 */
 	@PostMapping("/{id}/like/")
 	public TweetGetDto likeTweet(@PathVariable Integer id, @RequestBody CredentialsDto credentialsDto, HttpServletResponse response) {
 		TweetGetDto likedTweet = tweetService.likeTweet(id, credentialsDto);
@@ -92,10 +135,16 @@ public class TweetController {
 			response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
 			return ERROR;
 		} else {
-			return null;
+			return SUCCESS;
 		}
 	}
 	
+	/**
+	 * @param id
+	 * @param tweetSaveDto
+	 * @param response
+	 * @return the reply created from the request
+	 */
 	@PostMapping("/{id}/reply/")
 	public TweetGetDto replyToTweet(@PathVariable Integer id, @RequestBody TweetSaveDto tweetSaveDto, HttpServletResponse response) {
 		TweetGetDto reply = tweetService.replyToTweet(id, tweetSaveDto);
@@ -108,73 +157,109 @@ public class TweetController {
 		return reply;
 	}
 	
+	/**
+	 * @param id
+	 * @param credentialsDto
+	 * @param response
+	 * @return the repost information as well as a copy of the original post
+	 */
 	@PostMapping("/{id}/repost/")
 	public TweetRepostDto repostOfTweet(@PathVariable Integer id, @RequestBody CredentialsDto credentialsDto, HttpServletResponse response) {
 		TweetRepostDto repost = tweetService.repostOfTweet(id, credentialsDto);
 		
-		if(repost == null) {
+		if(repost == ERROR_REPOST) {
 			response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
-			return null;
+			return ERROR_REPOST;
 		} 
 		
 		return repost;
 	}
 
+	/**
+	 * @param id
+	 * @param response
+	 * @return all of the tags contained in the given tweet
+	 */
 	@GetMapping("/{id}/tags")
 	public Set<HashtagGetDto> getTweetTags(@PathVariable Integer id, HttpServletResponse response) {
 		if(!validateService.getTweetExists(id)) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			return null;
+			return ERROR_HSET;
 		}
 		
 		return tweetService.getTweetTags(id);
 	}
 
+	/**
+	 * @param id
+	 * @param response
+	 * @return all of the users that liked the given tweet
+	 */
 	@GetMapping("/{id}/likes")
 	public Set<UserGetDto> getTweetLikes(@PathVariable Integer id, HttpServletResponse response) {
 		if(!validateService.getTweetExists(id)) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			return null;
+			return ERROR_USET;
 		}
 		
 		return tweetService.getTweetLikes(id);
 	}
 
+	/**
+	 * @param id
+	 * @param response
+	 * @return all of the users in the current tweet chain and the current tweet
+	 */
 	@GetMapping("/{id}/context")
 	public ContextDto getContext(@PathVariable Integer id, HttpServletResponse response) {
 		if(!validateService.getTweetExists(id)) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			return null;
+			return ERROR_CONTEXT ;
 		}
 		
 		return tweetService.getContext(id);
 	}
 
+	/**
+	 * @param id
+	 * @param response
+	 * @return all tweets that replied to the current tweet
+	 */
 	@GetMapping("/{id}/replies")
 	public Set<TweetGetDto> getReplies(@PathVariable Integer id, HttpServletResponse response) {
 		if(!validateService.getTweetExists(id)) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			return null;
+			return ERROR_TSET;
 		}
 		
 		return tweetService.getReplies(id);
 	}
 
+	/**
+	 * @param id
+	 * @param response
+	 * @return all tweets that are reposts of the current tweet
+	 */
 	@GetMapping("/{id}/reposts")
 	public Set<TweetGetDto> getReposts(@PathVariable Integer id, HttpServletResponse response) {
 		if(!validateService.getTweetExists(id)) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			return null;
+			return ERROR_TSET;
 		}
 		
 		return tweetService.getReposts(id);
 	}
 
+	/**
+	 * @param id
+	 * @param response
+	 * @return all users that are mentioned in the given tweet
+	 */
 	@GetMapping("/{id}/mentions")
 	public Set<UserGetDto> getMentions(@PathVariable Integer id, HttpServletResponse response) {
 		if(!validateService.getTweetExists(id)) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			return null;
+			return ERROR_USET;
 		}
 		
 		return tweetService.getMentions(id);

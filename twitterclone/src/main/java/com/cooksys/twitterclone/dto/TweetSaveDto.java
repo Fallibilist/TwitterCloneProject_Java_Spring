@@ -10,6 +10,7 @@ package com.cooksys.twitterclone.dto;
 public class TweetSaveDto {
 
 	private String content;
+	
 	private CredentialsDto credentials;
 	
 	/**

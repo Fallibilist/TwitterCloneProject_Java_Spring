@@ -20,22 +20,38 @@ public class ValidateController {
 	
 	private ValidateService validateService;
 
+	/**
+	 * Constructor injecting services
+	 * @param validateService
+	 */
 	public ValidateController(ValidateService validateService) {
 		this.validateService = validateService;
 	}
 	
+	/**
+	 * @param label
+	 * @return boolean value representing whether or not the tag exists in the database
+	 */
 	@GetMapping("/tag/exists/{label}/")
-	public boolean getTagExists(@PathVariable String label) {
+	public Boolean getTagExists(@PathVariable String label) {
 		return validateService.getTagExists(label);
 	}
 	
+	/**
+	 * @param username
+	 * @return boolean value representing whether or not the username is avaliable
+	 */
 	@GetMapping("/username/available/@{username}/")
-	public boolean getUsernameAvailable(@PathVariable String username) {
+	public Boolean getUsernameAvailable(@PathVariable String username) {
 		return validateService.getUsernameAvailable(username);
 	}
 	
+	/**
+	 * @param username
+	 * @return boolean value representing whether or not the tag exists in the database and is active
+	 */
 	@GetMapping("/username/exists/@{username}/")
-	public boolean getUsernameExists(@PathVariable String username) {
+	public Boolean getUsernameExists(@PathVariable String username) {
 		return validateService.getUsernameExists(username);
 	}
 	

@@ -10,10 +10,13 @@ import java.util.TreeSet;
  *
  */
 public class ContextDto {
-	private TweetGetDto target;
-	private TreeSet<TweetGetDto> before;
-	private TreeSet<TweetGetDto> after;
 	
+	private TweetGetDto target;
+	
+	private TreeSet<TweetGetDto> before;
+	
+	private TreeSet<TweetGetDto> after;
+
 	/**
 	 * Default Constructor
 	 */

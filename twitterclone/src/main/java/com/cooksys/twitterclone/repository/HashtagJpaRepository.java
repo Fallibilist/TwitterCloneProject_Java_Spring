@@ -3,8 +3,6 @@
  */
 package com.cooksys.twitterclone.repository;
 
-import java.util.TreeSet;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.cooksys.twitterclone.entity.HashtagEntity;

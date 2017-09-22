@@ -40,17 +40,43 @@ import com.cooksys.twitterclone.utilities.Utilities;
 public class TweetService {
 	
 	private TweetJpaRepository tweetJpaRepository;
+	
 	private UserJpaRepository userJpaRepository;
+	
 	private HashtagJpaRepository hashtagJpaRepository;
+	
 	private TweetMapper tweetMapper;
+	
 	private CredentialsMapper credentialsMapper;
+	
 	private HashtagMapper hashtagMapper;
+	
 	private UserMapper userMapper;
+	
 	private ValidateService validateService;
+	
 	private UserService userService;
 	
 	private final TweetGetDto ERROR = null;
+	
+	private final TweetRepostDto ERROR_REPOST = null;
+	
+	private final TweetEntity ERROR_ENTITY = null;
+	
+	private final Set<TweetGetDto> ERROR_SET = null;
 
+	/**
+	 * Constructor injecting repositories, mappers, and services
+	 * @param tweetJpaRepository
+	 * @param userJpaRepository
+	 * @param hashtagJpaRepository
+	 * @param tweetMapper
+	 * @param credentialsMapper
+	 * @param hashtagMapper
+	 * @param userMapper
+	 * @param validateService
+	 * @param userService
+	 */
 	public TweetService(TweetJpaRepository tweetJpaRepository, UserJpaRepository userJpaRepository, 
 			HashtagJpaRepository hashtagJpaRepository, TweetMapper tweetMapper, CredentialsMapper credentialsMapper, 
 			HashtagMapper hashtagMapper, UserMapper userMapper, ValidateService validateService, UserService userService) {
@@ -65,26 +91,33 @@ public class TweetService {
 		this.userService = userService;
 	}
 	
+	/**
+	 * @param id
+	 * @return a tweet by id
+	 */
 	public TweetEntity pullTweet(Integer id) {
 		return validateService.pullTweet(id);
 	}
 
+	/**
+	 * @return all tweets tracked by the server
+	 */
 	public Set<TweetGetDto> getTweets() {
 		TreeSet<TweetGetDto> tweets = tweetMapper.toDto(tweetJpaRepository.findByActive(true));
 		
-		if(tweets == null) {
-			return null;
-		} else {
-			return tweets.descendingSet();			
-		}
+		return tweets == ERROR_SET ? ERROR_SET : tweets.descendingSet();
 	}
 
+	/**
+	 * @param tweetSaveDto
+	 * @return the created tweet
+	 */
 	public TweetGetDto postTweet(TweetSaveDto tweetSaveDto) {
 		TweetEntity tweet = tweetMapper.fromDtoSave(tweetSaveDto);
 		CredentialsEmbeddable credentials = credentialsMapper.fromDto(tweetSaveDto.getCredentials());
 		
-		// Ensures that the fields for the new tweet are valid
-		if(!validateService.validTweetFields(tweet) || !validateService.validateCredentials(credentials)) {
+		if(!validateService.validTweetFields(tweet) || 
+			!validateService.validateCredentials(credentials)) {
 			return ERROR;
 		}
 		
@@ -97,6 +130,10 @@ public class TweetService {
 		return tweetMapper.toDtoGet(tweet);
 	}
 
+	/**
+	 * @param id
+	 * @return the tweet that matches the given id if it is valid
+	 */
 	public TweetGetDto getTweet(Integer id) {
 		if(validateService.getTweetExists(id)) {
 			return tweetMapper.toDtoGet(pullTweet(id));
@@ -105,10 +142,14 @@ public class TweetService {
 		}
 	}
 
+	/**
+	 * @param id
+	 * @param credentialsDto
+	 * @return the deleted tweet
+	 */
 	public TweetGetDto deleteTweet(Integer id, CredentialsDto credentialsDto) {
 		CredentialsEmbeddable credentials = credentialsMapper.fromDto(credentialsDto);
 
-		// Checks if the tweet exists and if the credentials are correct
 		if(!validateService.getTweetExists(id) || 
 			!validateService.validateCredentials(credentials)) {
 			return ERROR;
@@ -121,10 +162,14 @@ public class TweetService {
 		return tweetMapper.toDtoGet(tweet);
 	}
 
+	/**
+	 * @param id
+	 * @param credentialsDto
+	 * @return the tweet that was liked
+	 */
 	public TweetGetDto likeTweet(Integer id, CredentialsDto credentialsDto) {
 		CredentialsEmbeddable credentials = credentialsMapper.fromDto(credentialsDto);
 
-		// Checks if the tweet and user exist and if the credentials are correct
 		if(!validateService.getTweetExists(id) || 
 			!validateService.getUsernameExists(credentials.getUsername()) ||
 			!validateService.validateCredentials(credentials)) {
@@ -136,7 +181,6 @@ public class TweetService {
 		TweetEntity tweetToLike = pullTweet(id);
 		Set<UserEntity> likes = tweetToLike.getLikes();
 		
-		// Checks if the user already likes this tweet
 		if(likes.contains(user)) {
 			return ERROR;
 		}
@@ -146,12 +190,17 @@ public class TweetService {
 		return tweetMapper.toDtoGet(tweetToLike);
 	}
 
+	/**
+	 * @param id
+	 * @param tweetSaveDto
+	 * @return the tweet created as a reply
+	 */
 	public TweetGetDto replyToTweet(Integer id, TweetSaveDto tweetSaveDto) {
 		TweetEntity tweet = tweetMapper.fromDtoSave(tweetSaveDto);
 		CredentialsEmbeddable credentials = credentialsMapper.fromDto(tweetSaveDto.getCredentials());
 		
-		// Ensures that the fields for the new tweet are valid
-		if(!validateService.validTweetFields(tweet) || !validateService.validateCredentials(credentials)) {
+		if(!validateService.validTweetFields(tweet) || 
+			!validateService.validateCredentials(credentials)) {
 			return ERROR;
 		}
 		
@@ -166,13 +215,17 @@ public class TweetService {
 		return tweetMapper.toDtoGet(tweet);
 	}
 
+	/**
+	 * @param id
+	 * @param credentialsDto
+	 * @return the tweet created as a repost
+	 */
 	public TweetRepostDto repostOfTweet(Integer id, CredentialsDto credentialsDto) {
 		TweetEntity tweet = new TweetEntity();
 		CredentialsEmbeddable credentials = credentialsMapper.fromDto(credentialsDto);
 		
-		// Ensures that the credentials match a valid user and the post requested exists
 		if(!validateService.validateCredentials(credentials) || !validateService.getTweetExists(id)) {
-			return null;
+			return ERROR_REPOST;
 		}
 		
 		tweet.setAuthor(validateService.pullUser(credentials.getUsername()));
@@ -187,6 +240,10 @@ public class TweetService {
 		return tweetMapper.toDtoRepost(tweet);
 	}
 
+	/**
+	 * @param id
+	 * @return a set of all the hashtags in the given tweet
+	 */
 	public Set<HashtagGetDto> getTweetTags(Integer id) {
 		return hashtagMapper
 				.toDto(pullTweet(id)
@@ -195,6 +252,10 @@ public class TweetService {
 				.collect(Collectors.toCollection(TreeSet::new)));
 	}
 
+	/**
+	 * @param id
+	 * @return a set of all users that like the given tweet
+	 */
 	public Set<UserGetDto> getTweetLikes(Integer id) {
 		return userMapper
 				.toDto(pullTweet(id)
@@ -204,13 +265,17 @@ public class TweetService {
 				.collect(Collectors.toCollection(TreeSet::new)));
 	}
 
+	/**
+	 * @param id
+	 * @return the parent train and children of the given tweet
+	 */
 	public ContextDto getContext(Integer id) {
 		TweetEntity primaryTweet = pullTweet(id);
 		TreeSet<TweetEntity> before = new TreeSet<TweetEntity>();
 		TreeSet<TweetEntity> after = new TreeSet<TweetEntity>();
 		
 		TweetEntity parent = primaryTweet.getParent();
-		while(parent != null) {
+		while(parent != ERROR_ENTITY) {
 			if(parent.getActive()) {
 				before.add(parent);
 			}
@@ -220,10 +285,14 @@ public class TweetService {
 		getChildTweets(primaryTweet, after);
 		
 		return new ContextDto(tweetMapper.toDtoGet(primaryTweet), 
-					tweetMapper.toDto(before), 
-					tweetMapper.toDto(after));
+						tweetMapper.toDto(before), 
+						tweetMapper.toDto(after));
 	}
 
+	/**
+	 * @param id
+	 * @return a set of tweets that are replies to the given tweet
+	 */
 	public Set<TweetGetDto> getReplies(Integer id) {
 		return tweetMapper
 				.toDto(tweetJpaRepository
@@ -233,6 +302,10 @@ public class TweetService {
 				.collect(Collectors.toCollection(TreeSet::new)));
 	}
 
+	/**
+	 * @param id
+	 * @return a set of tweets that are reposts of the given tweet
+	 */
 	public Set<TweetGetDto> getReposts(Integer id) {
 		return tweetMapper
 				.toDto(tweetJpaRepository
@@ -242,6 +315,10 @@ public class TweetService {
 				.collect(Collectors.toCollection(TreeSet::new)));
 	}
 
+	/**
+	 * @param id
+	 * @return a set of all users mentioned in the given tweet
+	 */
 	public Set<UserGetDto> getMentions(Integer id) {
 		return userMapper
 				.toDto(pullTweet(id)
@@ -251,6 +328,11 @@ public class TweetService {
 				.collect(Collectors.toCollection(TreeSet::new)));
 	}
 
+	/**
+	 * A private utility method used during creation of any tweet
+	 * @param tweet
+	 * @return the modified tweet
+	 */
 	private TweetEntity storeTagsAndMentions(TweetEntity tweet){
 		List<String> content = new ArrayList<String>(Arrays.asList(tweet.getContent().split("")));
 		if(content.contains(new String("@"))) {
@@ -341,6 +423,11 @@ public class TweetService {
 		return tweet;
 	}
 
+	/**
+	 * Private utiltity method used recursively by getContext() to find all the children of the current tweet
+	 * @param primaryTweet
+	 * @param after
+	 */
 	private void getChildTweets(TweetEntity primaryTweet, TreeSet<TweetEntity> after) {
 		if(!primaryTweet.getDirectChildren().isEmpty()) {
 			after
@@ -348,6 +435,7 @@ public class TweetService {
 				.getDirectChildren()
 				.stream().filter(tweet -> tweet.getActive())
 				.collect(Collectors.toCollection(TreeSet::new)));
+			
 			primaryTweet
 				.getDirectChildren()
 				.forEach(child -> getChildTweets(child, after));

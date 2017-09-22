@@ -3,8 +3,6 @@
  */
 package com.cooksys.twitterclone.dto;
 
-import java.sql.Timestamp;
-
 /**
  * @author Greg Hill
  *
@@ -12,8 +10,11 @@ import java.sql.Timestamp;
 public class TweetGetDto implements Comparable<TweetGetDto>{
 
 	private Integer id;
+	
 	private UserGetDto author;
+	
 	private Long posted;
+	
 	private String content;
 	
 	/**
@@ -122,6 +123,9 @@ public class TweetGetDto implements Comparable<TweetGetDto>{
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
 	@Override
 	public int compareTo(TweetGetDto tweetToCompare) {
 		if(this.id < tweetToCompare.getId()) {

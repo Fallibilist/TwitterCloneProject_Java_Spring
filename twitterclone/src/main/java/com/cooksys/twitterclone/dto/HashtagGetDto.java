@@ -3,10 +3,6 @@
  */
 package com.cooksys.twitterclone.dto;
 
-import java.sql.Timestamp;
-
-import com.cooksys.twitterclone.entity.HashtagEntity;
-
 /**
  * @author Greg Hill
  *
@@ -14,7 +10,9 @@ import com.cooksys.twitterclone.entity.HashtagEntity;
 public class HashtagGetDto implements Comparable<HashtagGetDto>{
 
 	private String label;
+	
 	private Long firstUsed;
+	
 	private Long lastUsed;
 	
 	/**
