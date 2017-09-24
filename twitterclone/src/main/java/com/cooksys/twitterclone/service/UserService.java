@@ -70,7 +70,7 @@ public class UserService {
 	 * @return a user by username
 	 */
 	public UserEntity pullUser(String username) {
-		return validateService.pullUser(username);
+		return userJpaRepository.findByCredentialsUsername(username);
 	}
 
 	/**
@@ -85,7 +85,7 @@ public class UserService {
 	 * @return the created user
 	 */
 	public UserGetDto postUser(UserSaveDto userSaveDto) {
-		UserEntity user = userMapper.fromDtoSave(userSaveDto, profileMapper, credentialsMapper);
+		UserEntity user = userMapper.fromDtoSave(userSaveDto);
 		CredentialsEmbeddable credentials = user.getCredentials();
 		
 		if(!validateService.validUserFields(user)) {
@@ -124,11 +124,7 @@ public class UserService {
 	 * @return retrieves a user is it is active
 	 */
 	public UserGetDto getUser(String username) {
-		if(validateService.getUsernameExists(username)) {
-			return userMapper.toDtoGet(pullUser(username));
-		} else {
-			return ERROR;
-		}
+		return validateService.getUsernameExists(username) ? userMapper.toDtoGet(pullUser(username)) : ERROR;
 	}
 
 	/**
@@ -137,7 +133,7 @@ public class UserService {
 	 * @return a modified user
 	 */
 	public synchronized UserGetDto patchUser(String username, UserSaveDto userSaveDto) {
-		UserEntity user = userMapper.fromDtoSave(userSaveDto, profileMapper, credentialsMapper);
+		UserEntity user = userMapper.fromDtoSave(userSaveDto);
 		CredentialsEmbeddable newCredentials = user.getCredentials();
 		ProfileEmbeddable newProfile = user.getProfile();
 
@@ -175,7 +171,7 @@ public class UserService {
 	 * @return a user whose profile has been overwritten by input data
 	 */
 	public synchronized UserGetDto putUser(String username, UserSaveDto userSaveDto) {
-		UserEntity user = userMapper.fromDtoSave(userSaveDto, profileMapper, credentialsMapper);
+		UserEntity user = userMapper.fromDtoSave(userSaveDto);
 		CredentialsEmbeddable newCredentials = user.getCredentials();
 		ProfileEmbeddable newProfile = user.getProfile();
 

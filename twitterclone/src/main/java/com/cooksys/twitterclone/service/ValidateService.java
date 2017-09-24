@@ -17,10 +17,6 @@ import com.cooksys.twitterclone.repository.UserJpaRepository;
  * @author Greg Hill
  *
  */
-/**
- * @author Greg Hill
- *
- */
 @Service
 public class ValidateService {
 	
@@ -35,6 +31,10 @@ public class ValidateService {
 	private final HashtagEntity ERROR_TAG = null;
 	
 	private final UserEntity ERROR_USER = null;
+	
+	private final String ERROR_STRING = null;
+	
+	private final CredentialsEmbeddable ERROR_CRED = null;
 
 	/**
 	 * Constructor injecting repositories
@@ -63,14 +63,6 @@ public class ValidateService {
 	public HashtagEntity pullTag(String label) {
 		return hashtagJpaRepository.findByLabel(label);
 	}
-	
-	/**
-	 * @param label
-	 * @return whether or not the given label is associated with a hashtag in the database
-	 */
-	public Boolean getTagExists(String label) {
-		return pullTag(label) != ERROR_TAG;
-	}
 
 	/**
 	 * @param id
@@ -78,6 +70,14 @@ public class ValidateService {
 	 */
 	public TweetEntity pullTweet(Integer id) {
 		return tweetJpaRepository.findOne(id);
+	}
+	
+	/**
+	 * @param label
+	 * @return whether or not the given label is associated with a hashtag in the database
+	 */
+	public Boolean getTagExists(String label) {
+		return pullTag(label) != ERROR_TAG;
 	}
 	
 	/**
@@ -121,11 +121,7 @@ public class ValidateService {
 	 */
 	public Boolean validateCredentials(CredentialsEmbeddable credentials) {
 		UserEntity user = pullUser(credentials.getUsername());
-		if(user != ERROR_USER) {
-			return user.getCredentials().getPassword().equals(credentials.getPassword());
-		} else {
-			return false;
-		}
+		return (user != ERROR_USER) ? user.getCredentials().getPassword().equals(credentials.getPassword()) :  false;
 	}
 
 	/**
@@ -133,14 +129,10 @@ public class ValidateService {
 	 * @return true if the user has valid information in all required fields, false otherwise
 	 */
 	public Boolean validUserFields(UserEntity user) {
-		if(user.getCredentials() == null ||
-			user.getCredentials().getUsername() == null ||
-			user.getCredentials().getPassword() == null ||
-			user.getProfile().getEmail() == null) {
-			return false;
-		} else {
-			return true;
-		}
+		return !(user.getCredentials() == ERROR_CRED ||
+			user.getCredentials().getUsername() == ERROR_STRING ||
+			user.getCredentials().getPassword() == ERROR_STRING ||
+			user.getProfile().getEmail() == ERROR_STRING);
 	}
 
 	/**
@@ -148,11 +140,7 @@ public class ValidateService {
 	 * @return validates the fields of the new tweet
 	 */
 	public Boolean validTweetFields(TweetEntity tweet) {
-		if(tweet.getContent() == null) {
-			return false;
-		} else {
-			return true;
-		}
+		return tweet.getContent() != ERROR_STRING;
 	}
 	
 }

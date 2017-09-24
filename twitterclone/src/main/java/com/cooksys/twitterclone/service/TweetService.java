@@ -96,7 +96,7 @@ public class TweetService {
 	 * @return a tweet by id
 	 */
 	public TweetEntity pullTweet(Integer id) {
-		return validateService.pullTweet(id);
+		return tweetJpaRepository.findOne(id);
 	}
 
 	/**
@@ -105,7 +105,7 @@ public class TweetService {
 	public Set<TweetGetDto> getTweets() {
 		TreeSet<TweetGetDto> tweets = tweetMapper.toDto(tweetJpaRepository.findByActive(true));
 		
-		return tweets == ERROR_SET ? ERROR_SET : tweets.descendingSet();
+		return (tweets == ERROR_SET) ? ERROR_SET : tweets.descendingSet();
 	}
 
 	/**
@@ -135,11 +135,7 @@ public class TweetService {
 	 * @return the tweet that matches the given id if it is valid
 	 */
 	public TweetGetDto getTweet(Integer id) {
-		if(validateService.getTweetExists(id)) {
-			return tweetMapper.toDtoGet(pullTweet(id));
-		} else {
-			return ERROR;
-		}
+		return validateService.getTweetExists(id) ? tweetMapper.toDtoGet(pullTweet(id)) : ERROR;
 	}
 
 	/**
@@ -181,11 +177,10 @@ public class TweetService {
 		TweetEntity tweetToLike = pullTweet(id);
 		Set<UserEntity> likes = tweetToLike.getLikes();
 		
-		if(likes.contains(user)) {
+		if(!likes.add(user)) {
 			return ERROR;
 		}
 		
-		likes.add(user);
 		tweetJpaRepository.save(tweetToLike);
 		return tweetMapper.toDtoGet(tweetToLike);
 	}

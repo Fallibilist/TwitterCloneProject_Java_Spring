@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.cooksys.twitterclone.dto.HashtagGetDto;
 import com.cooksys.twitterclone.dto.TweetGetDto;
+import com.cooksys.twitterclone.entity.HashtagEntity;
 import com.cooksys.twitterclone.mapper.HashtagMapper;
 import com.cooksys.twitterclone.mapper.TweetMapper;
 import com.cooksys.twitterclone.repository.HashtagJpaRepository;
@@ -42,6 +43,10 @@ public class HashtagService {
 		this.hashtagMapper = hashtagMapper;
 		this.tweetMapper = tweetMapper;
 		this.validateService = validateService;
+	}
+
+	public HashtagEntity pullTag(String label) {
+		return hashtagJpaRepository.findByLabel(label);
 	}
 
 	/**
